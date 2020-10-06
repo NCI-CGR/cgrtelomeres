@@ -1,0 +1,5 @@
+#' @details
+#' 
+#'
+#'
+"_PACKAGE"

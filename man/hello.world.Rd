@@ -6,9 +6,17 @@
 \usage{
 hello.world(ignored)
 }
+\arguments{
+\item{ignored}{an ignored parameter}
+}
 \description{
 \code{hello.world} prints said text to screen.
 }
 \details{
 This is entirely a placeholder and will be removed.
 }
+\examples{
+hello.world()
+
+}
+\keyword{test}
