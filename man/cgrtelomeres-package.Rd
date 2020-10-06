@@ -4,14 +4,14 @@
 \name{cgrtelomeres-package}
 \alias{cgrtelomeres}
 \alias{cgrtelomeres-package}
-\title{cgrtelomeres: What the Package Does (One Line, Title Case)}
+\title{cgrtelomeres: Automated Processing of Telomere qPCR Data}
 \description{
-What the package does (one paragraph).
+Process CGR lab telomere qPCR output into standard report formats.
 }
 \details{
 
 }
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Cameron Palmer \email{cameron.palmer@nih.gov}
 
 }
