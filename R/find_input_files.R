@@ -33,6 +33,6 @@ find.input.files <- function(path, telo.tag = "Telo", control.tag = "36B4") {
                                ".txt",
                                sep = "")
         stopifnot(telo.files[i] == expected.telo)
-        c(telo.files[i], control.files[i])}
+        c(paste(path, telo.files[i], sep = "/"), paste(path, control.files[i], sep = "/"))}
 	)
 }
