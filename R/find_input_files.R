@@ -17,7 +17,6 @@
 #' @param control.tag Character vector describing file tag for control condition
 #' @return list of pairs of (telomere, control) files
 #' @keywords telomeres
-#' @export
 #' @examples
 #' find.input.files("/path/to/Data/Exports")
 find.input.files <- function(path, telo.tag = "Telo", control.tag = "36B4") {
