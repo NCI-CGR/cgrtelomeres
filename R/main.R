@@ -17,7 +17,7 @@
 #' @keywords telomeres
 #' @export
 #' @examples
-#' process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output")
+#' process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output", "GP0317-TL7")
 #'
 process.experiment <- function(input.path, output.path, project.id) {
     ## check parameter requirements

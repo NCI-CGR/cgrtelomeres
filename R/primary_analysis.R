@@ -2,11 +2,21 @@
 #'
 #' @slot Source.Well.ID factor of well IDs from source data
 #' @slot Internal.Control boolean vector of whether a sample is an internal control
-#' @slot Rep1.Well,Rep2.Well,Rep3.Well factor of 384 well plate locations
-#' @slot Rep1.ExperimentalCt.prefilter,Rep2.ExperimentalCt.prefilter,Rep3.ExperimentalCt.prefilter numeric vector of raw telomeric Ct values
-#' @slot Rep1.ControlCt.prefilter,Rep2.ControlCt.prefilter,Rep3.ControlCt.prefilter numeric vector of raw control Ct values
-#' @slot Rep1.ExperimentalCt.postfilter,Rep2.ExperimentalCt.postfilter,Rep3.ExperimentalCt.postfilter numeric vector of post-filtering telomeric Ct values
-#' @slot Rep1.ControlCt.postfilter,Rep2.ControlCt.postfilter,Rep3.ControlCt.postfilter numeric vector of post-filtering control Ct values
+#' @slot Rep1.Well factor of 384 well plate locations for each first replicate
+#' @slot Rep2.Well factor of 384 well plate locations for each second replicate
+#' @slot Rep3.Well factor of 384 well plate locations for each third replicate
+#' @slot Rep1.ExperimentalCt.prefilter numeric vector of raw telomeric Ct values for each first replicate
+#' @slot Rep2.ExperimentalCt.prefilter numeric vector of raw telomeric Ct values for each second replicate
+#' @slot Rep3.ExperimentalCt.prefilter numeric vector of raw telomeric Ct values for each third replicate
+#' @slot Rep1.ControlCt.prefilter numeric vector of raw control Ct values for each first replicate
+#' @slot Rep2.ControlCt.prefilter numeric vector of raw control Ct values for each second replicate
+#' @slot Rep3.ControlCt.prefilter numeric vector of raw control Ct values for each third replicate
+#' @slot Rep1.ExperimentalCt.postfilter numeric vector of post-filtering telomeric Ct values for each first replicate
+#' @slot Rep2.ExperimentalCt.postfilter numeric vector of post-filtering telomeric Ct values for each second replicate
+#' @slot Rep3.ExperimentalCt.postfilter numeric vector of post-filtering telomeric Ct values for each third replicate
+#' @slot Rep1.ControlCt.postfilter numeric vector of post-filtering control Ct values for each first replicate
+#' @slot Rep2.ControlCt.postfilter numeric vector of post-filtering control Ct values for each second replicate
+#' @slot Rep3.ControlCt.postfilter numeric vector of post-filtering control Ct values for each third replicate
 #' @slot Avg.ExperimentalCt numeric vector of mean post-filtering telomeric Ct values
 #' @slot SD.ExperimentalCt numeric vector of standard deviation of post-filtering telomeric Ct values
 #' @slot PerCV.ExperimentalCt numeric vector of [something] of post-filtering telomeric Ct values

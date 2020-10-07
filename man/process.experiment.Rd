@@ -25,7 +25,7 @@ output files will be overwritten by this method, so please change output.path
 if you don't want this behavior.
 }
 \examples{
-process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output")
+process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output", "GP0317-TL7")
 
 }
 \keyword{telomeres}
