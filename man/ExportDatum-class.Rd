@@ -15,10 +15,15 @@ Store aligned telomere and control data per experiment
 \item{\code{Cp.Telo}}{numeric vector of cycle threshold data for telomere data}
 
 \item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene data}
+
+\item{\code{Standard}}{numeric vector of standard concentration, or NA if not a standard sample}
 }}
 
 \examples{
-new("ExportDatum", Pos = factor(c("A1", "A2", "A3")), Cp.Telo = runif(3, 0, 38), Cp.Control = runif(3, 0, 38))
+new("ExportDatum", Pos = factor(c("A1", "A2", "A3")),
+                   Cp.Telo = runif(3, 0, 38),
+                   Cp.Control = runif(3, 0, 38),
+                   Standard = rep(NA, 3))
 
 }
 \seealso{
