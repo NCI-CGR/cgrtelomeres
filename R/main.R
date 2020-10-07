@@ -13,15 +13,17 @@
 #' 
 #' @param input.path Character vector of input directory path
 #' @param output.path Character vector of output directory path
+#' @param project.id Character vector of project ID (e.g. "GP0317-TL7")
 #' @keywords telomeres
 #' @export
 #' @examples
 #' process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output")
 #'
-process.experiment <- function(input.path, output.path) {
+process.experiment <- function(input.path, output.path, project.id) {
     ## check parameter requirements
     stopifnot(is.vector(input.path, mode = "character"))
     stopifnot(is.vector(output.path, mode = "character"))
+    stopifnot(is.vector(project.id, mode = "character"))
     ## check input directory path exists
     stopifnot(dir.exists(input.path))
     ## if output directory path does not exist, create it
