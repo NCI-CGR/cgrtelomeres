@@ -14,15 +14,35 @@ Store primary analysis results, processed from ExportDatum
 
 \item{\code{Internal.Control}}{boolean vector of whether a sample is an internal control}
 
-\item{\code{Rep1.Well,Rep2.Well,Rep3.Well}}{factor of 384 well plate locations}
+\item{\code{Rep1.Well}}{factor of 384 well plate locations for each first replicate}
 
-\item{\code{Rep1.ExperimentalCt.prefilter,Rep2.ExperimentalCt.prefilter,Rep3.ExperimentalCt.prefilter}}{numeric vector of raw telomeric Ct values}
+\item{\code{Rep2.Well}}{factor of 384 well plate locations for each second replicate}
 
-\item{\code{Rep1.ControlCt.prefilter,Rep2.ControlCt.prefilter,Rep3.ControlCt.prefilter}}{numeric vector of raw control Ct values}
+\item{\code{Rep3.Well}}{factor of 384 well plate locations for each third replicate}
 
-\item{\code{Rep1.ExperimentalCt.postfilter,Rep2.ExperimentalCt.postfilter,Rep3.ExperimentalCt.postfilter}}{numeric vector of post-filtering telomeric Ct values}
+\item{\code{Rep1.ExperimentalCt.prefilter}}{numeric vector of raw telomeric Ct values for each first replicate}
 
-\item{\code{Rep1.ControlCt.postfilter,Rep2.ControlCt.postfilter,Rep3.ControlCt.postfilter}}{numeric vector of post-filtering control Ct values}
+\item{\code{Rep2.ExperimentalCt.prefilter}}{numeric vector of raw telomeric Ct values for each second replicate}
+
+\item{\code{Rep3.ExperimentalCt.prefilter}}{numeric vector of raw telomeric Ct values for each third replicate}
+
+\item{\code{Rep1.ControlCt.prefilter}}{numeric vector of raw control Ct values for each first replicate}
+
+\item{\code{Rep2.ControlCt.prefilter}}{numeric vector of raw control Ct values for each second replicate}
+
+\item{\code{Rep3.ControlCt.prefilter}}{numeric vector of raw control Ct values for each third replicate}
+
+\item{\code{Rep1.ExperimentalCt.postfilter}}{numeric vector of post-filtering telomeric Ct values for each first replicate}
+
+\item{\code{Rep2.ExperimentalCt.postfilter}}{numeric vector of post-filtering telomeric Ct values for each second replicate}
+
+\item{\code{Rep3.ExperimentalCt.postfilter}}{numeric vector of post-filtering telomeric Ct values for each third replicate}
+
+\item{\code{Rep1.ControlCt.postfilter}}{numeric vector of post-filtering control Ct values for each first replicate}
+
+\item{\code{Rep2.ControlCt.postfilter}}{numeric vector of post-filtering control Ct values for each second replicate}
+
+\item{\code{Rep3.ControlCt.postfilter}}{numeric vector of post-filtering control Ct values for each third replicate}
 
 \item{\code{Avg.ExperimentalCt}}{numeric vector of mean post-filtering telomeric Ct values}
 

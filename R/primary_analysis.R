@@ -58,3 +58,30 @@ setClass("PrimaryAnalysis", slots = list(Source.Well.ID = "factor",
                                          Fit.ControlConc = "vector",
                                          TS.Ratio = "vector",
                                          Normalized.TS = "vector"))
+
+#' Constructor for primary analysis class
+#'
+#' Initializes replicate well assignments to default 384 well plate layout.
+#' Note that other slots in class can be set but must be named, and named
+#' replacements to well assignments will be overwritten, so if you want to
+#' use nonstandard well assignments, construct the class directly with new()
+#'
+#' @keywords telomeres
+#' @export
+#' @examples
+#' PrimaryAnalysis(Source.Well.ID = rep("", 309))
+#'
+PrimaryAnalysis <- function(...) {
+    obj <- new("PrimaryAnalysis", ...)
+    shared.levels <- paste(rep(LETTERS[1:16], each = 24), rep(1:24, 16), sep = "")
+    obj@Rep1.Well <- factor(c(paste(LETTERS[seq(2, by = 2, length.out = 7)], rep(2, 7), sep = ""),
+                              paste(LETTERS[seq(1, by = 2, length.out = 8)], rep(seq(1, 23, 2), each = 8), sep = "")),
+                            levels = shared.levels)
+    obj@Rep2.Well <- factor(c(paste(LETTERS[seq(2, by = 2, length.out = 7)], rep(4, 7), sep = ""),
+                              paste(LETTERS[seq(1, by = 2, length.out = 8)], rep(seq(2, 24, 2), each = 8), sep = "")),
+                            levels = shared.levels)
+    obj@Rep3.Well <- factor(c(paste(LETTERS[seq(2, by = 2, length.out = 7)], rep(6, 7), sep = ""),
+                              paste(LETTERS[seq(2, by = 2, length.out = 8)], rep(seq(1, 23, 2), each = 8), sep = "")),
+                            levels = shared.levels)
+    obj
+}
