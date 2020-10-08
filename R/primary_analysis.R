@@ -252,7 +252,7 @@ create.analysis <- function(export.datum) {
     obj@Model.Control <- lm(log2(obj@Avg.ControlCt[1:6]) ~ log2(fixed.concentrations))
     ## get predicted concentrations using transformed fit data from models
     obj@Fit.ExperimentalConc <- 2^((log2(obj@Avg.ExperimentalCt) - summary(obj@Model.Experiment)$coeff[1,1]) / summary(obj@Model.Experiment)$coeff[2,1])
-    obj@Fit.ControlConc <- 2^((log2(obj@Avg.ExperimentalCt) - summary(obj@Model.Experiment)$coeff[1,1]) / summary(obj@Model.Experiment)$coeff[2,1])
+    obj@Fit.ControlConc <- 2^((log2(obj@Avg.ControlCt) - summary(obj@Model.Control)$coeff[1,1]) / summary(obj@Model.Control)$coeff[2,1])
     ## compute T/S ratio as simple division of above
     obj@TS.Ratio <- obj@Fit.ExperimentalConc / obj@Fit.ControlConc
     ## normalization divides the above T/S ratio by the average T/S ratio of internal control samples.
