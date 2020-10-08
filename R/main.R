@@ -27,14 +27,16 @@ process.experiment <- function(input.path, output.path, project.id) {
     ## check input directory path exists
     stopifnot(dir.exists(input.path))
     ## if output directory path does not exist, create it
-    if (!dir.exists(output.path)) {
-        dir.create(output.path)
-    }
+    create.output.directories(output.path)
     ## aggregate pairs of filenames from input.path/Data/Exports
     input.files <- find.input.files(paste(input.path, "Data", "Exports", sep="/"))
     ## load data from acquired pairs of files
     input.data <- lapply(input.files, read.export.datum)
+    ## run primary analysis steps for Data/Analysis
+    primary.analysis <- lapply(input.data, create.analysis)
+    ## report the primary analysis results to the output/Data/Analysis
+    lapply(primary.analysis, report.primary.analysis)
     ## TODO: downstream steps
-    input.data
+    primary.analysis
 }
 
