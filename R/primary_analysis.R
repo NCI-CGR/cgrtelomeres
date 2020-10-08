@@ -150,7 +150,7 @@ process.average <- function(vec.rep1,
     apply(cbind(vec.rep1, vec.rep2, vec.rep3),
           1,
           function (i) {
-              ifelse(length(which(!is.na(i))) < 2, mean(i, na.rm = TRUE), NA)
+              ifelse(length(which(is.na(i))) < 2, mean(i, na.rm = TRUE), NA)
           })
 }
 
@@ -180,7 +180,7 @@ process.standard.deviation <- function(vec.rep1,
     apply(cbind(vec.rep1, vec.rep2, vec.rep3),
           1,
           function (i) {
-              ifelse(length(which(!is.na(i))) < 2, sd(i, na.rm = TRUE), NA)
+              ifelse(length(which(is.na(i))) < 2, sd(i, na.rm = TRUE), NA)
           })
 }
 
@@ -206,12 +206,9 @@ process.standard.deviation <- function(vec.rep1,
 #' @examples
 #'
 create.analysis <- function(export.datum) {
-    print(export.datum)
     obj <- PrimaryAnalysis()
     ## store the analysis code (a letter from A-H) for output file conventions
-    print("trying to assign analysis code")
     obj@Analysis.Code <- export.datum@Analysis.Code
-    print("analysis code assigned")
     ## load Cp data from export datum at the appropriate wells
     obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]
     obj@Rep2.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep2.Well]
@@ -249,6 +246,8 @@ create.analysis <- function(export.datum) {
     ## note that this model requires post hoc transformation before you get the exact coefficients
     ## that were being produced with excel's `logest`
     fixed.concentrations <- c(4, 1.6, 0.64, 0.256, 0.1024, 0.041)
+    print(obj)
+    print(fixed.concentrations)
     obj@Model.Experiment <- lm(log2(obj@Avg.ExperimentalCt[1:6]) ~ log2(fixed.concentrations))
     obj@Model.Control <- lm(log2(obj@Avg.ControlCt[1:6]) ~ log2(fixed.concentrations))
     ## get predicted concentrations using transformed fit data from models
