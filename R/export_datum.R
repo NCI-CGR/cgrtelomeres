@@ -1,19 +1,16 @@
 #' Store aligned telomere and control data per experiment
 #'
-#' @slot Pos factor of well locations for datapoints on a 384 well plate
 #' @slot Cp.Telo numeric vector of cycle threshold data for telomere data
 #' @slot Cp.Control numeric vector of cycle threshold data for control gene data
 #' @slot Standard numeric vector of standard concentration, or NA if not a standard sample
 #' @keywords telomeres
 #' @seealso [read.export.datum()] for loading data into `ExportDatum`
 #' @examples
-#' new("ExportDatum", Pos = factor(c("A1", "A2", "A3")),
-#'                    Cp.Telo = runif(3, 0, 38),
+#' new("ExportDatum", Cp.Telo = runif(3, 0, 38),
 #'                    Cp.Control = runif(3, 0, 38),
 #'                    Standard = rep(NA, 3))
 #' 
-setClass("ExportDatum", slots = list(Pos = "factor",
-                                     Cp.Telo = "vector",
+setClass("ExportDatum", slots = list(Cp.Telo = "vector",
                                      Cp.Control = "vector",
                                      Standard = "vector"))
 
@@ -42,9 +39,12 @@ read.export.datum <- function(exp.control.filenames) {
 	control.data <- read.table(exp.control.filenames[2], sep = "\t", skip = 1, header = TRUE)
         stopifnot(identical(exp.data$Pos, control.data$Pos))
         control.data$Standard[control.data$Standard < 2e-16] <- NA
-	new("ExportDatum",
-            Pos = exp.data$Pos,
-            Cp.Telo = exp.data$Cp,
-            Cp.Control = control.data$Cp,
-            Standard = control.data$Standard)
+	obj <- new("ExportDatum",
+                   Cp.Telo = exp.data$Cp,
+                   Cp.Control = control.data$Cp,
+                   Standard = control.data$Standard)
+        names(obj@Cp.Telo) <- exp.data$Pos
+        names(obj@Cp.Control) <- exp.data$Pos
+        names(obj@Standard) <- exp.data$Pos
+        obj
 }
