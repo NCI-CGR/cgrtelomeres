@@ -92,6 +92,7 @@ PrimaryAnalysis <- function(...) {
     obj@Source.Well.ID <- factor(c(rep("Standards", 6),
                                    "NTC",
                                    paste(rep(LETTERS[1:8], 12), sprintf("%02d", rep(1:12, each = 8)), sep = "-")))
+    obj
 }
 
 #' Apply Ct filtering to PrimaryAnalysis intermediates based on some criteria
@@ -205,9 +206,12 @@ process.standard.deviation <- function(vec.rep1,
 #' @examples
 #'
 create.analysis <- function(export.datum) {
+    print(export.datum)
     obj <- PrimaryAnalysis()
     ## store the analysis code (a letter from A-H) for output file conventions
+    print("trying to assign analysis code")
     obj@Analysis.Code <- export.datum@Analysis.Code
+    print("analysis code assigned")
     ## load Cp data from export datum at the appropriate wells
     obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]
     obj@Rep2.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep2.Well]
