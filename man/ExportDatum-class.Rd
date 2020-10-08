@@ -10,8 +10,6 @@ Store aligned telomere and control data per experiment
 \section{Slots}{
 
 \describe{
-\item{\code{Pos}}{factor of well locations for datapoints on a 384 well plate}
-
 \item{\code{Cp.Telo}}{numeric vector of cycle threshold data for telomere data}
 
 \item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene data}
@@ -20,8 +18,7 @@ Store aligned telomere and control data per experiment
 }}
 
 \examples{
-new("ExportDatum", Pos = factor(c("A1", "A2", "A3")),
-                   Cp.Telo = runif(3, 0, 38),
+new("ExportDatum", Cp.Telo = runif(3, 0, 38),
                    Cp.Control = runif(3, 0, 38),
                    Standard = rep(NA, 3))
 
