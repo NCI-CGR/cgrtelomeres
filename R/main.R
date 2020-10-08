@@ -35,7 +35,7 @@ process.experiment <- function(input.path, output.path, project.id) {
     ## run primary analysis steps for Data/Analysis
     primary.analysis <- lapply(input.data, create.analysis)
     ## report the primary analysis results to the output/Data/Analysis
-    lapply(primary.analysis, report.primary.analysis)
+    lapply(primary.analysis, function (i) {report.primary.analysis(i, output.path, project.id)})
     ## TODO: downstream steps
     primary.analysis
 }
