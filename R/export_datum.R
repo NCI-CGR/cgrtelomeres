@@ -42,7 +42,7 @@ read.export.datum <- function(exp.control.filenames) {
     stopifnot(identical(exp.data$Pos, control.data$Pos))
     control.data$Standard[control.data$Standard < 2e-16] <- NA
     obj <- new("ExportDatum",
-               Analysis.Code = gsub("^[A-Z0-9]+(_[A-Z]_).*$", "\\1", exp.control.filenames[1]),
+               Analysis.Code = gsub("^.*/[A-Z0-9]+_([A-Z])_.*$", "\\1", exp.control.filenames[1]),
                Cp.Telo = exp.data$Cp,
                Cp.Control = control.data$Cp,
                Standard = control.data$Standard)
