@@ -10,6 +10,8 @@ Store primary analysis results, processed from ExportDatum
 \section{Slots}{
 
 \describe{
+\item{\code{Analysis.Code}}{character vector describing alphabetic analysis code (A-H)}
+
 \item{\code{Source.Well.ID}}{factor of well IDs from source data}
 
 \item{\code{Internal.Control}}{boolean vector of whether a sample is an internal control}

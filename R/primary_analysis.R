@@ -1,5 +1,6 @@
 #' Store primary analysis results, processed from ExportDatum
 #'
+#' @slot Analysis.Code character vector describing alphabetic analysis code (A-H)
 #' @slot Source.Well.ID factor of well IDs from source data
 #' @slot Internal.Control boolean vector of whether a sample is an internal control
 #' @slot Rep1.Well factor of 384 well plate locations for each first replicate
@@ -33,7 +34,8 @@
 #' @examples
 #' new("PrimaryAnalysis")
 #' 
-setClass("PrimaryAnalysis", slots = list(Source.Well.ID = "factor",
+setClass("PrimaryAnalysis", slots = list(Analysis.Code = "vector",
+                                         Source.Well.ID = "factor",
                                          Internal.Control = "vector",
                                          Rep1.Well = "factor",
                                          Rep2.Well = "factor",
@@ -204,6 +206,8 @@ process.standard.deviation <- function(vec.rep1,
 #'
 create.analysis <- function(export.datum) {
     obj <- PrimaryAnalysis()
+    ## store the analysis code (a letter from A-H) for output file conventions
+    obj@Analysis.Code <- export.datum@Analysis.Code
     ## load Cp data from export datum at the appropriate wells
     obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]
     obj@Rep2.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep2.Well]

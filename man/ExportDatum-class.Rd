@@ -10,6 +10,8 @@ Store aligned telomere and control data per experiment
 \section{Slots}{
 
 \describe{
+\item{\code{Analysis.Code}}{character vector describing alphabetic analysis code (A-H)}
+
 \item{\code{Cp.Telo}}{numeric vector of cycle threshold data for telomere data}
 
 \item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene data}
