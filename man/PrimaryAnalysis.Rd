@@ -7,7 +7,8 @@
 PrimaryAnalysis(...)
 }
 \description{
-Initializes replicate well assignments to default 384 well plate layout.
+Initializes replicate well assignments to default 384 well plate layout
+and standard configuration of 96 well source.
 Note that other slots in class can be set but must be named, and named
 replacements to well assignments will be overwritten, so if you want to
 use nonstandard well assignments, construct the class directly with new()

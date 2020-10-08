@@ -56,6 +56,10 @@ Store primary analysis results, processed from ExportDatum
 
 \item{\code{PerCV.ControlCt}}{numeric vector of \link{something} of post-filtering control Ct values}
 
+\item{\code{Model.Experiment}}{object of class lm, fit model for telomeric data}
+
+\item{\code{Model.Control}}{object of class lm, fit model for control data}
+
 \item{\code{Fit.ExperimentalConc}}{numeric vector of exponential fit values from standard curve for telomeric data}
 
 \item{\code{Fit.ControlConc}}{numeric vector of exponential fit values from standard curve for control data}
