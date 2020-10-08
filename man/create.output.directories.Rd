@@ -7,7 +7,7 @@
 create.output.directories(top.path)
 }
 \arguments{
-\item{top.path}{character vector of output top-most directory}
+\item{top.path}{Character vector of output top-most directory}
 }
 \description{
 \code{create.output.directories} creates all directories and subdirectories
@@ -22,3 +22,4 @@ This silently handles if said folders already exist.
 create.output.directories("C:/Users/palmercd/Documents/telomeres/results")
 
 }
+\keyword{telomeres}
