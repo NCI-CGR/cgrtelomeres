@@ -24,6 +24,9 @@ regression information that is deprecated) that is not being included for the
 moment.
 }
 \examples{
+filename.pair <- find.input.files("Examples for Bioinformatics")
+export.datum <- read.export.datum(filename.pair)
+processed.analysis <- create.analysis(export.datum)
 
 }
 \seealso{

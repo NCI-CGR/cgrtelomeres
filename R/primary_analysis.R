@@ -184,6 +184,42 @@ process.standard.deviation <- function(vec.rep1,
           })
 }
 
+#' Provided a standard curve, predict concentration from Ct
+#'
+#' @description
+#' `compute.fit` takes a fit transformed exponential regression model and uses
+#' its coefficients to predict best fit values for provided Cts, given boundaries
+#' on valid estimates defined by the standards.
+#' 
+#' @details
+#' The transformation applied to the data assumes that regression has been performed
+#' on log2-transformed predictors (concentrations) and outcomes (Cts).
+#'
+#' @param fit.model Object of class `lm` from which regression coefficients are extracted.
+#' @param cycle.thresholds Numeric vector of Ct values to convert to best fit concentrations.
+#' @param standard.limits Numeric vector of length 2, presumably the output of `range`
+#' @return Numeric vector of best fit concentrations, with out of bounds values set to NA.
+#' @keywords telomeres
+#' @seealso [create.analysis()] for the standard curve calculation; [lm()] for linear regression.
+#' @examples
+#' fixed.concentrations <- c(4, 1.6, 0.64, 0.256, 0.1024, 0.041)
+#' experimental.cts <- runif(20, 1, 38)
+#' fit.model <- lm(log2(experimental.cts[1:6]) ~ log2(fixed.concentrations))
+#' fit.values <- compute.fit(fit.model, experimental.cts, fixed.concentrations)
+#' 
+compute.fit <- function(fit.model,
+                        predictors,
+                        standard.limits) {
+    stopifnot(is(fit.model, "lm"))
+    stopifnot(is.vector(predictors, mode = "numeric"))
+    stopifnot(is.vector(standard.limits, mode = "numeric"))
+    stopifnot(length(standard.limits) == 2)
+    stopifnot(standard.limits[1] <= standard.limits[2])
+    res <- 2^((log2(predictors) - summary(fit.model)$coeff[1,1]) / summary(fit.model)$coeff[2,1])
+    res[predictors < standard.limits[1] | predictors > standard.limits[2]] <- NA
+    res
+}
+
 #' Create a PrimaryAnalysis from a loaded ExportDatum
 #'
 #' @description
@@ -204,6 +240,9 @@ process.standard.deviation <- function(vec.rep1,
 #' @seealso [PrimaryAnalysis()] for constructing empty PrimaryAnalysis objects;
 #' [read.export.datum()] for generating compatible input data structures.
 #' @examples
+#' filename.pair <- find.input.files("Examples for Bioinformatics")
+#' export.datum <- read.export.datum(filename.pair)
+#' processed.analysis <- create.analysis(export.datum)
 #'
 create.analysis <- function(export.datum) {
     obj <- PrimaryAnalysis()
@@ -246,13 +285,17 @@ create.analysis <- function(export.datum) {
     ## note that this model requires post hoc transformation before you get the exact coefficients
     ## that were being produced with excel's `logest`
     fixed.concentrations <- c(4, 1.6, 0.64, 0.256, 0.1024, 0.041)
-    print(obj)
-    print(fixed.concentrations)
     obj@Model.Experiment <- lm(log2(obj@Avg.ExperimentalCt[1:6]) ~ log2(fixed.concentrations))
     obj@Model.Control <- lm(log2(obj@Avg.ControlCt[1:6]) ~ log2(fixed.concentrations))
     ## get predicted concentrations using transformed fit data from models
-    obj@Fit.ExperimentalConc <- 2^((log2(obj@Avg.ExperimentalCt) - summary(obj@Model.Experiment)$coeff[1,1]) / summary(obj@Model.Experiment)$coeff[2,1])
-    obj@Fit.ControlConc <- 2^((log2(obj@Avg.ControlCt) - summary(obj@Model.Control)$coeff[1,1]) / summary(obj@Model.Control)$coeff[2,1])
+    obj@Fit.ExperimentalConc <- compute.fit(obj@Model.Experiment,
+                                            obj@Avg.ExperimentalCt,
+                                            range(obj@Avg.ExperimentalCt[1:6], na.rm = TRUE))
+    obj@Fit.ControlConc <- compute.fit(obj@Model.Control,
+                                       obj@Avg.ControlCt,
+                                       range(obj@Avg.ControlCt[1:6], na.rm = TRUE))
+    ##)2^((log2(obj@Avg.ExperimentalCt) - summary(obj@Model.Experiment)$coeff[1,1]) / summary(obj@Model.Experiment)$coeff[2,1])
+    #obj@Fit.ControlConc <- 2^((log2(obj@Avg.ControlCt) - summary(obj@Model.Control)$coeff[1,1]) / summary(obj@Model.Control)$coeff[2,1])
     ## compute T/S ratio as simple division of above
     obj@TS.Ratio <- obj@Fit.ExperimentalConc / obj@Fit.ControlConc
     ## normalization divides the above T/S ratio by the average T/S ratio of internal control samples.
