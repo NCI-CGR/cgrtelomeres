@@ -4,12 +4,14 @@
 \alias{process.experiment}
 \title{Process a CGR-style telomere qPCR experiment}
 \usage{
-process.experiment(input.path, output.path)
+process.experiment(input.path, output.path, project.id)
 }
 \arguments{
 \item{input.path}{Character vector of input directory path}
 
 \item{output.path}{Character vector of output directory path}
+
+\item{project.id}{Character vector of project ID (e.g. "GP0317-TL7")}
 }
 \description{
 \code{process.experiment} takes the output of a lab telomere qPCR experiment
@@ -23,7 +25,7 @@ output files will be overwritten by this method, so please change output.path
 if you don't want this behavior.
 }
 \examples{
-process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output")
+process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output", "GP0317-TL7")
 
 }
 \keyword{telomeres}

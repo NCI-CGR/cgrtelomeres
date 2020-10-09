@@ -1,18 +1,17 @@
 #' Store aligned telomere and control data per experiment
 #'
-#' @slot Pos factor of well locations for datapoints on a 384 well plate
+#' @slot Analysis.Code character vector describing alphabetic analysis code (A-H)
 #' @slot Cp.Telo numeric vector of cycle threshold data for telomere data
 #' @slot Cp.Control numeric vector of cycle threshold data for control gene data
 #' @slot Standard numeric vector of standard concentration, or NA if not a standard sample
 #' @keywords telomeres
 #' @seealso [read.export.datum()] for loading data into `ExportDatum`
 #' @examples
-#' new("ExportDatum", Pos = factor(c("A1", "A2", "A3")),
-#'                    Cp.Telo = runif(3, 0, 38),
+#' new("ExportDatum", Cp.Telo = runif(3, 0, 38),
 #'                    Cp.Control = runif(3, 0, 38),
 #'                    Standard = rep(NA, 3))
 #' 
-setClass("ExportDatum", slots = list(Pos = "factor",
+setClass("ExportDatum", slots = list(Analysis.Code = "vector",
                                      Cp.Telo = "vector",
                                      Cp.Control = "vector",
                                      Standard = "vector"))
@@ -36,15 +35,19 @@ setClass("ExportDatum", slots = list(Pos = "factor",
 #' read.export.datum(c("Data/Exports/PC29625_A_Telo.txt", "Data/Exports/PC29624_A_36B4.txt"))
 #' 
 read.export.datum <- function(exp.control.filenames) {
-	stopifnot(is.vector(exp.control.filenames, mode = "character"))
-	stopifnot(length(exp.control.filenames) == 2)
-	exp.data <- read.table(exp.control.filenames[1], sep = "\t", skip = 1, header = TRUE)
-	control.data <- read.table(exp.control.filenames[2], sep = "\t", skip = 1, header = TRUE)
-        stopifnot(identical(exp.data$Pos, control.data$Pos))
-        control.data$Standard[control.data$Standard < 2e-16] <- NA
-	new("ExportDatum",
-            Pos = exp.data$Pos,
-            Cp.Telo = exp.data$Cp,
-            Cp.Control = control.data$Cp,
-            Standard = control.data$Standard)
+    stopifnot(is.vector(exp.control.filenames, mode = "character"))
+    stopifnot(length(exp.control.filenames) == 2)
+    exp.data <- read.table(exp.control.filenames[1], sep = "\t", skip = 1, header = TRUE)
+    control.data <- read.table(exp.control.filenames[2], sep = "\t", skip = 1, header = TRUE)
+    stopifnot(identical(exp.data$Pos, control.data$Pos))
+    control.data$Standard[control.data$Standard < 2e-16] <- NA
+    obj <- new("ExportDatum",
+               Analysis.Code = gsub("^.*/[A-Z0-9]+_([A-Z])_.*$", "\\1", exp.control.filenames[1]),
+               Cp.Telo = exp.data$Cp,
+               Cp.Control = control.data$Cp,
+               Standard = control.data$Standard)
+    names(obj@Cp.Telo) <- exp.data$Pos
+    names(obj@Cp.Control) <- exp.data$Pos
+    names(obj@Standard) <- exp.data$Pos
+    obj
 }
