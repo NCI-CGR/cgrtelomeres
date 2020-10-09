@@ -165,10 +165,14 @@ process.average <- function(vec.rep1,
 #' There is an implicit restriction that appears to be applied manually to the
 #' real data example, where conditions with fewer than two replicates are blanked.
 #' Hopefully, this should cover that situation, while allowing single dropouts.
+#' Strangely, the existing excel template uses sample standard deviation for telomere
+#' data and population standard deviation for control data. I don't know why this
+#' is the case but it's emulated here for the moment.
 #'
 #' @param vec.rep1 numeric vector of first replicate Ct data
 #' @param vec.rep2 numeric vector of second replicate Ct data
 #' @param vec.rep3 numeric vector of third replicate Ct data
+#' @param use.sample.adjustment boolean of whether to use sqrt(N - 1) biased sample adjustment
 #' @return numeric vector of vector-wise averages, with NA exclusion criteria applied
 #' @seealso [process.average()] for equivalent calculation with mean
 #' @examples
@@ -176,11 +180,12 @@ process.average <- function(vec.rep1,
 #' 
 process.standard.deviation <- function(vec.rep1,
                                        vec.rep2,
-                                       vec.rep3) {
+                                       vec.rep3,
+                                       use.sample.adjustment = TRUE) {
     apply(cbind(vec.rep1, vec.rep2, vec.rep3),
           1,
           function (i) {
-              ifelse(length(which(is.na(i))) < 2, sd(i, na.rm = TRUE), NA)
+              ifelse(length(which(is.na(i))) < 2, sd(i, na.rm = TRUE) * ifelse(use.sample.adjustment, 1, sqrt((length(which(!is.na(i))) - 1) / length(which(!is.na(i))))), NA)
           })
 }
 
@@ -277,7 +282,8 @@ create.analysis <- function(export.datum) {
                                          obj@Rep3.ControlCt.postfilter)
     obj@SD.ControlCt <- process.standard.deviation(obj@Rep1.ControlCt.postfilter,
                                                    obj@Rep2.ControlCt.postfilter,
-                                                   obj@Rep3.ControlCt.postfilter)
+                                                   obj@Rep3.ControlCt.postfilter,
+                                                   FALSE)
     obj@PerCV.ControlCt <- 100 * obj@SD.ControlCt / obj@Avg.ControlCt
     ## must run exponential regressions against the standard lanes.
     ## now, it *appears* that the standard concentrations are predefined in the excel template,
