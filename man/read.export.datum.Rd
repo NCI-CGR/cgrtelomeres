@@ -4,10 +4,12 @@
 \alias{read.export.datum}
 \title{Read and align Cp data for telomeres and controls in an experiment}
 \usage{
-read.export.datum(exp.control.filenames)
+read.export.datum(exp.control.filenames, source.plate.contents.search.path)
 }
 \arguments{
 \item{exp.control.filenames}{length-2 vector of filenames: one for Telo, one for 36B4}
+
+\item{source.plate.contents.search.path}{charaver vector with path to test case Data/Analysis *.xlsx files}
 }
 \value{
 an instance of S4 class \code{ExportDatum} containing aligned relevant information.
@@ -20,6 +22,12 @@ data and aligns them for later use
 This function removes extraneous metadata and provides mild control checking. It does
 not postprocess the data in any meaningful way. This function should not be called
 directly by the end user.
+
+Note that for workaround purposes while I'm figuring out how the end user is going
+to specify the evidently external location of the "Source Plate Contents" Data/Analysis
+pasted spreadsheet tab, I'm just going to pull the source plate contents from the
+existing spreadsheets. This will be removed at a future date, but allows development
+and testing to continue for the time being.
 }
 \examples{
 read.export.datum(c("Data/Exports/PC29625_A_Telo.txt", "Data/Exports/PC29624_A_36B4.txt"))

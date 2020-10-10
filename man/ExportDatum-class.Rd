@@ -17,12 +17,18 @@ Store aligned telomere and control data per experiment
 \item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene data}
 
 \item{\code{Standard}}{numeric vector of standard concentration, or NA if not a standard sample}
+
+\item{\code{Well.ID}}{character vector of well ID codes from Source Plate Contents}
+
+\item{\code{Vial.ID}}{character vector of vial ID codes from Source Plate Contents}
 }}
 
 \examples{
 new("ExportDatum", Cp.Telo = runif(3, 0, 38),
                    Cp.Control = runif(3, 0, 38),
-                   Standard = rep(NA, 3))
+                   Standard = rep(NA, 3),
+                   Well.ID = rep(NA, 3),
+                   Vial.ID = rep(NA, 3))
 
 }
 \seealso{
