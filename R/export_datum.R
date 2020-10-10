@@ -4,17 +4,23 @@
 #' @slot Cp.Telo numeric vector of cycle threshold data for telomere data
 #' @slot Cp.Control numeric vector of cycle threshold data for control gene data
 #' @slot Standard numeric vector of standard concentration, or NA if not a standard sample
+#' @slot Well.ID character vector of well ID codes from Source Plate Contents
+#' @slot Vial.ID character vector of vial ID codes from Source Plate Contents
 #' @keywords telomeres
 #' @seealso [read.export.datum()] for loading data into `ExportDatum`
 #' @examples
 #' new("ExportDatum", Cp.Telo = runif(3, 0, 38),
 #'                    Cp.Control = runif(3, 0, 38),
-#'                    Standard = rep(NA, 3))
+#'                    Standard = rep(NA, 3),
+#'                    Well.ID = rep(NA, 3),
+#'                    Vial.ID = rep(NA, 3))
 #' 
 setClass("ExportDatum", slots = list(Analysis.Code = "vector",
                                      Cp.Telo = "vector",
                                      Cp.Control = "vector",
-                                     Standard = "vector"))
+                                     Standard = "vector",
+                                     Well.ID = "vector",
+                                     Vial.ID = "vector"))
 
 #' Read and align Cp data for telomeres and controls in an experiment
 #'
@@ -27,14 +33,21 @@ setClass("ExportDatum", slots = list(Analysis.Code = "vector",
 #' not postprocess the data in any meaningful way. This function should not be called
 #' directly by the end user.
 #'
+#' Note that for workaround purposes while I'm figuring out how the end user is going
+#' to specify the evidently external location of the "Source Plate Contents" Data/Analysis
+#' pasted spreadsheet tab, I'm just going to pull the source plate contents from the
+#' existing spreadsheets. This will be removed at a future date, but allows development
+#' and testing to continue for the time being.
+#'
 #' @param exp.control.filenames length-2 vector of filenames: one for Telo, one for 36B4
+#' @param source.plate.contents.search.path charaver vector with path to test case Data/Analysis *.xlsx files
 #' @return an instance of S4 class `ExportDatum` containing aligned relevant information.
 #' @keywords telomeres
 #' @seealso [find.input.files()] for generating the expected input for this function.
 #' @examples
 #' read.export.datum(c("Data/Exports/PC29625_A_Telo.txt", "Data/Exports/PC29624_A_36B4.txt"))
 #' 
-read.export.datum <- function(exp.control.filenames) {
+read.export.datum <- function(exp.control.filenames, source.plate.contents.search.path) {
     stopifnot(is.vector(exp.control.filenames, mode = "character"))
     stopifnot(length(exp.control.filenames) == 2)
     exp.data <- read.table(exp.control.filenames[1], sep = "\t", skip = 1, header = TRUE)
@@ -49,5 +62,21 @@ read.export.datum <- function(exp.control.filenames) {
     names(obj@Cp.Telo) <- exp.data$Pos
     names(obj@Cp.Control) <- exp.data$Pos
     names(obj@Standard) <- exp.data$Pos
+
+    ## deal with Source Plate Contents
+    stopifnot(is.vector(source.plate.contents.search.path, mode = "character"))
+    stopifnot(dir.exists(source.plate.contents.search.path))
+    target.source.file <- list.files(source.plate.contents.search.path, paste("^.+_", obj@Analysis.Code, "\\.xlsx$", sep = ""))
+    stopifnot(is.vector(target.source.file, mode = "character"))
+    stopifnot(length(target.source.file) == 1)
+    source.plate.contents <- openxlsx::read.xlsx(paste(source.plate.contents.search.path, target.source.file, sep = "/"), sheet = 1, rowNames = FALSE, colNames = TRUE)
+    stopifnot(length(which(colnames(source.plate.contents) == "Well.ID")) == 1)
+    stopifnot(length(which(colnames(source.plate.contents) == "Vial.ID")) == 1)
+    source.plate.contents[, "Well.ID"] <- as.vector(source.plate.contents[, "Well.ID"], mode = "character")
+    source.plate.contents[, "Vial.ID"] <- as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
+    obj@Well.ID <- source.plate.contents[, "Well.ID"]
+    obj@Vial.ID <- source.plate.contents[, "Vial.ID"]
+    ## end dealing with Source Plate Contents
+    
     obj
 }
