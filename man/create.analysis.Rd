@@ -4,10 +4,21 @@
 \alias{create.analysis}
 \title{Create a PrimaryAnalysis from a loaded ExportDatum}
 \usage{
-create.analysis(export.datum)
+create.analysis(
+  export.datum,
+  plate.content.report = NA,
+  plate.list = NA,
+  infer.384.locations = FALSE
+)
 }
 \arguments{
-\item{export.datum}{an ExportDatum object with raw qPCR data for processing}
+\item{export.datum}{An ExportDatum object with raw qPCR data for processing}
+
+\item{plate.content.report}{Character vector of plate content report for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA}
+
+\item{plate.list}{Character vector of plate list for project (e.g. "PlateList_GP0317-TL1.xls") or NA}
+
+\item{infer.384.locations}{Logical: whether to assume fixed 96->384 well mapping}
 }
 \value{
 a PrimaryAnalysis object containing the processed results for the input

@@ -4,15 +4,27 @@
 \alias{read.export.datum}
 \title{Read and align Cp data for telomeres and controls in an experiment}
 \usage{
-read.export.datum(exp.control.filenames, source.plate.contents.search.path)
+read.export.datum(
+  exp.control.filenames,
+  source.plate.contents.search.path = NA,
+  subject.list.from.input.path = NA,
+  plate.content.report = NA,
+  plate.list = NA
+)
 }
 \arguments{
-\item{exp.control.filenames}{length-2 vector of filenames: one for Telo, one for 36B4}
+\item{exp.control.filenames}{Length-2 vector of filenames: one for Telo, one for 36B4}
 
-\item{source.plate.contents.search.path}{charaver vector with path to test case Data/Analysis *.xlsx files}
+\item{source.plate.contents.search.path}{Character vector with path to test case Data/Analysis *.xlsx files}
+
+\item{subject.list.from.input.path}{Logical: whether to pull subject data from Data/Analysis/*xlsx of an existing analysis run}
+
+\item{plate.content.report}{Character vector of plate content report for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA}
+
+\item{plate.list}{Character vector of plate list for project (e.g. "PlateList_GP0317-TL1.xls") or NA}
 }
 \value{
-an instance of S4 class \code{ExportDatum} containing aligned relevant information.
+An instance of S4 class \code{ExportDatum} containing aligned relevant information.
 }
 \description{
 \code{read.export.datum} reads a pair of exported files containing separated telomere and control
