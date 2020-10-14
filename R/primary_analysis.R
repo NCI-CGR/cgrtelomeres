@@ -238,7 +238,10 @@ compute.fit <- function(fit.model,
 #' regression information that is deprecated) that is not being included for the
 #' moment. 
 #'
-#' @param export.datum an ExportDatum object with raw qPCR data for processing
+#' @param export.datum An ExportDatum object with raw qPCR data for processing
+#' @param plate.content.report Character vector of plate content report for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA
+#' @param plate.list Character vector of plate list for project (e.g. "PlateList_GP0317-TL1.xls") or NA
+#' @param infer.384.locations Logical: whether to assume fixed 96->384 well mapping
 #' @return a PrimaryAnalysis object containing the processed results for the input
 #' @keywords telomeres
 #' @export
@@ -249,10 +252,33 @@ compute.fit <- function(fit.model,
 #' export.datum <- read.export.datum(filename.pair)
 #' processed.analysis <- create.analysis(export.datum)
 #'
-create.analysis <- function(export.datum) {
+create.analysis <- function(export.datum,
+                            plate.content.report = NA,
+                            plate.list = NA,
+                            infer.384.locations = FALSE) {
+    ## basic input error checking: redundant with process.experiment but good practice regardless
+    stopifnot((is.vector(plate.content.report, mode = "character") &
+               file.exists(plate.content.report)) |
+              isTRUE(is.na(plate.content.report)))
+    stopifnot((is.vector(plate.list, mode = "character") &
+               file.exists(plate.list)) |
+              isTRUE(is.na(plate.list)))
+    stopifnot(is.logical(infer.384.locations))
+    ## `infer.384.locations` only works if the plate list and content report are both specified
+    stopifnot(!infer.384.locations | (infer.384.locations & !is.na(plate.content.report) & !is.na(plate.list)))
+    ## instantiate
     obj <- PrimaryAnalysis()
     ## store the analysis code (a letter from A-H) for output file conventions
     obj@Analysis.Code <- export.datum@Analysis.Code
+    ## if infer.384.locations, map 96->384 well plates from plate content report and list
+    ## in order to recompute names(obj@Rep[1-3].Well)
+    if (infer.384.locations & isTRUE(!is.na(plate.list)) & isTRUE(!is.na(plate.content.report))) {
+        plate.list.data <- openxlsx::read.xlsx(plate.list, sheet = 1, rowNames = FALSE, colNames = TRUE)
+        plate.content.data <- openxlsx::read.xlsx(plate.content.report, sheet = 1, rowNames = FALSE, colNames = TRUE)
+    } else if (infer.384.locations) {
+
+    } ## implied remaining condition is use predicted well assignments, which is constructed by default
+    
     ## load Cp data from export datum at the appropriate wells
     obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]
     obj@Rep2.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep2.Well]
