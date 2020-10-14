@@ -68,9 +68,16 @@ process.experiment <- function(input.path,
     ## aggregate pairs of filenames from input.path/Data/Exports
     input.files <- find.input.files(paste(input.path, "Data", "Exports", sep = "/"))
     ## load data from acquired pairs of files
-    input.data <- lapply(input.files, function(i) {read.export.datum(i, paste(input.path, "Data", "Analysis", sep = "/"))})
+    input.data <- lapply(input.files, function(i) {read.export.datum(i,
+                                                                     source.plate.contents.search.path = paste(input.path, "Data", "Analysis", sep = "/"),
+                                                                     subject.list.from.input.path = subject.list.from.input.path,
+                                                                     plate.content.report = plate.content.report,
+                                                                     plate.list = plate.list)})
     ## run primary analysis steps for Data/Analysis
-    primary.analysis <- lapply(input.data, create.analysis)
+    primary.analysis <- lapply(input.data, function(i) {create.analysis(i,
+                                                                        plate.content.report = plate.content.report,
+                                                                        plate.list = plate.list,
+                                                                        infer.384.locations = infer.384.locations)})
     ## report the primary analysis results to the output/Data/Analysis
     lapply(primary.analysis, function (i) {report.primary.analysis(i, output.path, project.id)})
     ## TODO: downstream steps
