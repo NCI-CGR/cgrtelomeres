@@ -225,6 +225,98 @@ compute.fit <- function(fit.model,
     res
 }
 
+
+#' Map 96 to 384 wells using Plate List and Content Report data
+#'
+#' @description
+#' `extract.well.mappings` takes plate list and content data and extracts
+#' the actual 96->384 well mapping used in the analysis, as opposed to
+#' the default one observed in the initial test case.
+#'
+#' @details
+#' The output is sorted lexicographically by 96 well label. Replicate
+#' assignments (1 vs 2 vs 3) are similarly resolved by lexicographical
+#' sort of the 384 well labels. This should compel the output to exactly
+#' match the previous protocol's Data/Analysis/*xlsx format if used
+#' without further shuffling.
+#'
+#' @param plate.list.data Data frame of plate list data
+#' @param plate.content.data Data frame of plate content report data
+#' @param analysis.code Character vector: case-sensitive letter [A-H] for run code
+#' @return List with entries Rep1.Well, Rep2.Well, Rep3.Well, corresponding to
+#' columns in the Data/Analysis/*xlsx files. Each will be a factor.
+#' @keywords telomeres
+#' @seealso [create.analysis()] for calling function; [openxlsx::read.xlsx()] for
+#' an example of how to generate the plate list or content data frames.
+#' @examples
+#' content.filename <- "PlateContentReport_GP0317-TL1.xls"
+#' list.filename <- "PlateList_GP0317-TL1.xls"
+#' content.data <- openxlsx:read.xlsx(content.filename, sheet = 1, rowNames = FALSE, colNames = TRUE)
+#' list.data <- openxlsx::read.xlsx(list.filename, sheet = 1, rowNames = FALSE, colNames = TRUE)
+#' analysis.code <- "H"
+#' well.mappings <- extract.well.mappings(list.data, content.data, analysis.code)
+#' 
+extract.well.mappings <- function(plate.list.data,
+                                  plate.content.data,
+                                  analysis.code) {
+    ## input format checking
+    stopifnot(is.data.frame(plate.list.data))
+    stopifnot(length(which(colnames(plate.list.data) == "Description")) == 1)
+    stopifnot(length(which(colnames(plate.list.data) == "Identifier")) == 1)
+    stopifnot(is.data.frame(plate.content.data))
+    stopifnot(length(which(colnames(plate.content.data) == "Well.ID")) == 1)
+    stopifnot(length(which(colnames(plate.content.data) == "Vial.ID")) == 1)
+    stopifnot(length(which(colnames(plate.content.data) == "Plate.ID")) == 1)
+    stopifnot(length(which(colnames(plate.content.data) == "2D.Barcode")) == 1)
+    stopifnot(is.vector(analysis.code, mode = "character"))
+    ## process for this is as follows:
+    ## 1) in plate list, get Identifier column entry corresponding to Description "{project.id}/Telo {obj@Analysis.Code}"
+    ## 2) pull the plate content Well.ID and Vial.ID entries for rows in Plate.ID matching that list Description
+    ## 3) map replicate wells from Well.ID, parsing out various things
+    matched.experimental.plate.index <- which(grepl(paste("^.*/Telo ", analysis.code, "$", sep = ""), plate.list.data$Description))
+    matched.control.plate.index <- which(grepl(paste("^.*/36B4 ", analysis.code, "$", sep = ""), plate.list.data$Description))
+    stopifnot(length(matched.experimental.plate.index) == 1)
+    stopifnot(length(matched.control.plate.index) == 1)
+    experimental.plate.id <- plate.list.data$Identifier[matched.experimental.plate.index]
+    control.plate.id <- plate.list.data$Identifier[matched.control.plate.index]
+    matched.experimental.content <- plate.content.data[plate.content.data$Plate.ID == experimental.plate.id, ]
+    matched.control.content <- plate.content.data[plate.content.data$Plate.ID == control.plate.id, ]
+    stopifnot(nrow(matched.experimental.content) > 0)
+    stopifnot(nrow(matched.experimental.content) == nrow(matched.control.content))
+    stopifnot(identical(matched.experimental.content$Vial.ID, matched.control.content$Vial.ID))
+    ## for what can only be described as Reasons, the 384 well labels do not have leading "0"s prefixed
+    ## to Data/Analysis/*xlsx columns D-F labels. so those need to be parsed away if present
+    parsed.well.ids <- paste(gsub("^([A-Z])-[0-9]+$", "\\1", matched.experimental.content$Well.ID),
+                             as.vector(gsub("^[A-Z]-([0-9]+)$", "\\1", matched.experimental.content$Well.ID), mode = "numeric"),
+                             sep = "")
+    matched.experimental.content$parsed.well.ids <- parsed.well.ids
+    ## need to deal with controls
+    ## the existing analysis flags six (each with three replicates) standards of known concentration;
+    ## a fixed NTC (with three replicates); some number of additional triplicate NTCs within the samples;
+    ## and a number of triplicate "Internal Control" subjects within the samples.
+    ## how do we figure out which is which, and how is each flagged?
+    ## Standards:
+    ##    How to detect: empty "2D.Barcode" content entry; "Vial.ID" content entry is pure numeric in {4,1.6,0.64,0.256,0.0124,0.04096}
+    ##    How to handle: for each replicate, report as the first six entries in order of descending concentration
+    ## NTC:
+    ##    How to detect: null entries for both "2D.Barcode" and "Vial.ID"
+    ##    How to handle: unclear. the Data/Analysis files always seem to list the {N2,N4,N6} NTC as a fixed value
+    ##                   immediately after the standards, but then the data (if present) are not used for anything in particular.
+    ##                   I don't know if there's anything intrinsically different about the {N2,N4,N6} NTC versus the others.
+    ##                   perhaps the N# triplicate is the only one guaranteed to be measured? possibly need to cross reference
+    ##                   with the export txt files. in any case, it may be necessary to move all the NTCs to their own cluster
+    ##                   of results, which honestly isn't a bad thing really: presumably someone checking the NTCs wants to
+    ##                   check them all at once?
+    ##                   I think there's also an issue of empty wells that aren't being measured at all, and that need
+    ##                   to be filtered out before reporting, that are still somehow
+    ## Internal Controls:
+    ##    How to detect: null "2D.Barcode"; "^NA[0-9]+$" "Vial.ID"
+    ##    How to handle: there is a vector in ExportDatum that theoretically was going to track internal control status.
+    ##                   however, it's not 100% clear to me if that's correct at this point, seeing as the information
+    ##                   is more clearly available here.
+}
+
+
 #' Create a PrimaryAnalysis from a loaded ExportDatum
 #'
 #' @description
@@ -244,7 +336,6 @@ compute.fit <- function(fit.model,
 #' @param infer.384.locations Logical: whether to assume fixed 96->384 well mapping
 #' @return a PrimaryAnalysis object containing the processed results for the input
 #' @keywords telomeres
-#' @export
 #' @seealso [PrimaryAnalysis()] for constructing empty PrimaryAnalysis objects;
 #' [read.export.datum()] for generating compatible input data structures.
 #' @examples
@@ -275,8 +366,13 @@ create.analysis <- function(export.datum,
     if (infer.384.locations & isTRUE(!is.na(plate.list)) & isTRUE(!is.na(plate.content.report))) {
         plate.list.data <- openxlsx::read.xlsx(plate.list, sheet = 1, rowNames = FALSE, colNames = TRUE)
         plate.content.data <- openxlsx::read.xlsx(plate.content.report, sheet = 1, rowNames = FALSE, colNames = TRUE)
+        all.replicate.wells <- extract.well.mappings(plate.list.data, plate.content.data, obj@Analysis.code)
+        shared.levels <- paste(rep(LETTERS[1:16], each = 24), rep(1:24, 16), sep = "")
+        obj@Rep1.Well <- factor(all.replicate.wells[["Rep1.Well"]], levels = shared.levels)
+        obj@Rep2.Well <- factor(all.replicate.wells[["Rep2.Well"]], levels = shared.levels)
+        obj@Rep3.Well <- factor(all.replicate.wells[["Rep3.Well"]], levels = shared.levels)
     } else if (infer.384.locations) {
-
+        stop("In create.analysis(): cannot proceed with inferring 384 well locations without valid plate list and content report")
     } ## implied remaining condition is use predicted well assignments, which is constructed by default
     
     ## load Cp data from export datum at the appropriate wells
