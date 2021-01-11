@@ -25,6 +25,7 @@ postprocessing
 pre
 PrimaryAnalysis
 qPCR
+rmarkdown
 Rmd
 Roxygen
 RoxygenNote

@@ -1,0 +1,18 @@
+---
+title: "Report Template for CGR Telomere Analysis"
+output: html_document
+params:
+  input.path: ""
+  output.path: ""
+  project.id: ""
+  plate.content.report: ""
+  plate.list: ""
+  infer.384.locations: FALSE
+  subject.list.from.input.path: TRUE
+---
+
+```{r include=TRUE}
+require(cgrtelomeres)
+print("hello world?")
+```
+
