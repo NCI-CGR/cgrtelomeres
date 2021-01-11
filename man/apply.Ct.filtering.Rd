@@ -17,20 +17,21 @@ Numeric vector of input with some overlarge values set to NA.
 to conform with current behavior of the analysis protocol.
 }
 \details{
-The current filter applied is "Ct equal to 38 is set to NA". This is different
-than what's applied in the excel template (equal to 28, set to 0), but based on
-how the Cts are defined, the 28 criterion is actually a bug in the template. By
-inspection, it seems like the actual current protocol is to go through and
-manually blank entries that exceed some Ct threshold, possibly closer to 30.
-This function provides centralized control should that filter need to be
-adjusted in the future.
+The current filter applied is "Ct equal to 38 is set to NA". This is
+different than what's applied in the excel template (equal to 28,
+set to 0), but based on how the Cts are defined, the 28 criterion
+is actually a bug in the template. By inspection, it seems like the
+actual current protocol is to go through and manually blank entries
+that exceed some Ct threshold, possibly closer to 30. This function
+provides centralized control should that filter need to be adjusted
+in the future.
 }
 \examples{
 filtered.data <- apply.Ct.filtering(raw.data)
-
 }
 \seealso{
-\code{\link[=read.export.datum]{read.export.datum()}} for acquiring raw Ct values, \code{\link[=PrimaryAnalysis]{PrimaryAnalysis()}}
+\code{\link[=read.export.datum]{read.export.datum()}} for acquiring raw Ct values,
+\code{\link[=PrimaryAnalysis]{PrimaryAnalysis()}}
 for construction of PrimaryAnalysis objects that use these processed Cts.
 }
 \keyword{telomeres}

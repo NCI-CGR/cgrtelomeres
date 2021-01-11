@@ -26,9 +26,9 @@ my.files <- find.input.files("Data/Exports")
 my.data <- read.export.datum(my.files[[1]])
 my.analysis <- create.analysis(my.data)
 report.primary.analysis(my.analysis, "my.output", "GP0317-TL7")
-
 }
 \seealso{
-\code{\link[=create.analysis]{create.analysis()}} for generating compatible PrimaryAnalysis objects.
+\code{\link[=create.analysis]{create.analysis()}} for generating compatible
+PrimaryAnalysis objects.
 }
 \keyword{telomeres}

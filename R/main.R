@@ -3,21 +3,22 @@
 #' @description
 #' `process.experiment` takes the output of a lab telomere qPCR experiment
 #' and generates the expected output content from prior processing methods.
-#' 
+#'
 #' @details
 #' This is the main entry point for the CGR telomere processing package.
-#' The input directory is sanity checked for its expected contents. The output
-#' directory will be created if it doesn't already exist. Any existing conflicting
-#' output files will be overwritten by this method, so please change output.path
-#' if you don't want this behavior.
+#' The input directory is sanity checked for its expected contents. The
+#' output directory will be created if it doesn't already exist. Any
+#' existing conflicting output files will be overwritten by this method,
+#' so please change output.path if you don't want this behavior.
 #'
-#' During development, plate content report and list files were not necessarily
-#' available for test cases. As such, an override mode has been added
-#' that pulls pre-pasted copies of relevant content report data from the
-#' spreadsheets in Data/Analysis from an existing telomere run. During
-#' deployment, this will almost certainly not be the desired behavior, and
-#' this feature is scheduled to be removed. This flag will also be overridden
-#' when plate list and content report are both specified.
+#' During development, plate content report and list files were not
+#' necessarily available for test cases. As such, an override mode
+#' has been added that pulls pre-pasted copies of relevant content
+#' report data from the spreadsheets in Data/Analysis from an existing
+#' telomere run. During deployment, this will almost certainly not be
+#' the desired behavior, and this feature is scheduled to be removed.
+#' This flag will also be overridden when plate list and content report
+#' are both specified.
 #'
 #' In all existing test datasets, a fixed mapping from 96 well to 384 well
 #' layouts has been found. For mild efficiency purposes, this mapping
@@ -25,20 +26,27 @@
 #' well mapping is changed at some point in the future, setting
 #' `infer.384.locations` to `FALSE` will trigger dynamic remapping using
 #' the data in `plate.content.report` and `plate.list`.
-#' 
+#'
 #' @param input.path Character vector of input directory path
 #' @param output.path Character vector of output directory path
-#' @param project.id Character vector of project ID (e.g. "GP0317-TL7") or NA
-#' @param plate.content.report Character vector of plate content report for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA
-#' @param plate.list Character vector of plate list for project (e.g. "PlateList_GP0317-TL1.xls") or NA
-#' @param infer.384.locations Logical: whether to assume fixed 96->384 well mapping
-#' @param subject.list.from.input.path Logical: whether to pull subject data from Data/Analysis/*xlsx of an existing analysis run
+#' @param project.id Character vector of project ID
+#' (e.g. "GP0317-TL7") or NA
+#' @param plate.content.report Character vector of plate content
+#' report for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA
+#' @param plate.list Character vector of plate list for project
+#' (e.g. "PlateList_GP0317-TL1.xls") or NA
+#' @param infer.384.locations Logical: whether to assume fixed
+#' 96->384 well mapping
+#' @param subject.list.from.input.path Logical: whether to pull subject
+#' data from Data/Analysis/*xlsx of an existing analysis run
 #' @return TBD
 #' @keywords telomeres
 #' @export
 #' @examples
-#' process.experiment("Examples for Bioinformatics", "C:/Users/palmercd/Documents/telomeres/output", "GP0317-TL7")
-#'
+#' process.experiment(
+#'   "Examples for Bioinformatics",
+#'   "C:/Users/palmercd/Documents/telomeres/output", "GP0317-TL7"
+#' )
 process.experiment <- function(input.path,
                                output.path,
                                project.id = NA,
@@ -46,41 +54,62 @@ process.experiment <- function(input.path,
                                plate.list = NA,
                                infer.384.locations = FALSE,
                                subject.list.from.input.path = TRUE) {
-    ## check parameter requirements
-    ## type checks
-    stopifnot(is.vector(input.path, mode = "character") & dir.exists(input.path))
-    stopifnot(is.vector(output.path, mode = "character"))
-    stopifnot(is.vector(project.id, mode = "character") | isTRUE(is.na(project.id)))
-    stopifnot((is.vector(plate.content.report, mode = "character") &
-               file.exists(plate.content.report)) |
-              isTRUE(is.na(plate.content.report)))
-    stopifnot((is.vector(plate.list, mode = "character") &
-               file.exists(plate.list)) |
-              isTRUE(is.na(plate.list)))
-    stopifnot(is.logical(infer.384.locations))
-    stopifnot(is.logical(subject.list.from.input.path))
-    ## `!subject.list.from.input.path` only works if the plate list and content report are both specified
-    stopifnot((!is.na(plate.content.report) & !is.na(plate.list)) | subject.list.from.input.path)
-    ## `infer.384.locations` only works if the plate list and content report are both specified
-    stopifnot(!infer.384.locations | (infer.384.locations & !is.na(plate.content.report) & !is.na(plate.list)))
-    ## if output directory path does not exist, create it
-    create.output.directories(output.path)
-    ## aggregate pairs of filenames from input.path/Data/Exports
-    input.files <- find.input.files(paste(input.path, "Data", "Exports", sep = "/"))
-    ## load data from acquired pairs of files
-    input.data <- lapply(input.files, function(i) {read.export.datum(i,
-                                                                     source.plate.contents.search.path = paste(input.path, "Data", "Analysis", sep = "/"),
-                                                                     subject.list.from.input.path = subject.list.from.input.path,
-                                                                     plate.content.report = plate.content.report,
-                                                                     plate.list = plate.list)})
-    ## run primary analysis steps for Data/Analysis
-    primary.analysis <- lapply(input.data, function(i) {create.analysis(i,
-                                                                        plate.content.report = plate.content.report,
-                                                                        plate.list = plate.list,
-                                                                        infer.384.locations = infer.384.locations)})
-    ## report the primary analysis results to the output/Data/Analysis
-    lapply(primary.analysis, function (i) {report.primary.analysis(i, output.path, project.id)})
-    ## TODO: downstream steps
-    primary.analysis
+  ## check parameter requirements
+  ## type checks
+  stopifnot(is.vector(input.path, mode = "character") &
+    dir.exists(input.path))
+  stopifnot(is.vector(output.path, mode = "character"))
+  stopifnot(is.vector(project.id, mode = "character") |
+    isTRUE(is.na(project.id)))
+  stopifnot((is.vector(plate.content.report, mode = "character") &
+    file.exists(plate.content.report)) |
+    isTRUE(is.na(plate.content.report)))
+  stopifnot((is.vector(plate.list, mode = "character") &
+    file.exists(plate.list)) |
+    isTRUE(is.na(plate.list)))
+  stopifnot(is.logical(infer.384.locations))
+  stopifnot(is.logical(subject.list.from.input.path))
+  ## `!subject.list.from.input.path` only works if the plate list
+  ## and content report are both specified
+  stopifnot((!is.na(plate.content.report) & !is.na(plate.list)) |
+    subject.list.from.input.path)
+  ## `infer.384.locations` only works if the plate list and content
+  ## report are both specified
+  stopifnot(!infer.384.locations | (infer.384.locations &
+    !is.na(plate.content.report) &
+    !is.na(plate.list)))
+  ## if output directory path does not exist, create it
+  cgrtelomeres::create.output.directories(output.path)
+  ## aggregate pairs of filenames from input.path/Data/Exports
+  input.files <- find.input.files(paste(input.path, "Data",
+    "Exports",
+    sep = "/"
+  ))
+  ## load data from acquired pairs of files
+  input.data <- lapply(input.files, function(i) {
+    read.export.datum(i,
+      source.plate.contents.search.path = paste(input.path,
+        "Data",
+        "Analysis",
+        sep = "/"
+      ),
+      subject.list.from.input.path = subject.list.from.input.path,
+      plate.content.report = plate.content.report,
+      plate.list = plate.list
+    )
+  })
+  ## run primary analysis steps for Data/Analysis
+  primary.analysis <- lapply(input.data, function(i) {
+    create.analysis(i,
+      plate.content.report = plate.content.report,
+      plate.list = plate.list,
+      infer.384.locations = infer.384.locations
+    )
+  })
+  ## report the primary analysis results to the output/Data/Analysis
+  lapply(primary.analysis, function(i) {
+    cgrtelomeres::report.primary.analysis(i, output.path, project.id)
+  })
+  ## TODO: downstream steps
+  primary.analysis
 }
-

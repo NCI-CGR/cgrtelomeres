@@ -7,32 +7,37 @@
 compute.fit(fit.model, predictors, standard.limits)
 }
 \arguments{
-\item{fit.model}{Object of class \code{lm} from which regression coefficients are extracted.}
+\item{fit.model}{Object of class \code{lm} from which regression
+coefficients are extracted.}
 
-\item{standard.limits}{Numeric vector of length 2, presumably the output of \code{range}}
+\item{standard.limits}{Numeric vector of length 2, presumably the
+output of \code{range}}
 
-\item{cycle.thresholds}{Numeric vector of Ct values to convert to best fit concentrations.}
+\item{cycle.thresholds}{Numeric vector of Ct values to convert to
+best fit concentrations.}
 }
 \value{
-Numeric vector of best fit concentrations, with out of bounds values set to NA.
+Numeric vector of best fit concentrations, with out of bounds
+values set to NA.
 }
 \description{
 \code{compute.fit} takes a fit transformed exponential regression model and uses
-its coefficients to predict best fit values for provided Cts, given boundaries
-on valid estimates defined by the standards.
+its coefficients to predict best fit values for provided Cts, given
+boundaries on valid estimates defined by the standards.
 }
 \details{
-The transformation applied to the data assumes that regression has been performed
-on log2-transformed predictors (concentrations) and outcomes (Cts).
+The transformation applied to the data assumes that regression has
+been performed on log2-transformed predictors (concentrations) and
+outcomes (Cts).
 }
 \examples{
 fixed.concentrations <- c(4, 1.6, 0.64, 0.256, 0.1024, 0.041)
 experimental.cts <- runif(20, 1, 38)
 fit.model <- lm(log2(experimental.cts[1:6]) ~ log2(fixed.concentrations))
 fit.values <- compute.fit(fit.model, experimental.cts, fixed.concentrations)
-
 }
 \seealso{
-\code{\link[=create.analysis]{create.analysis()}} for the standard curve calculation; \code{\link[=lm]{lm()}} for linear regression.
+\code{\link[=create.analysis]{create.analysis()}} for the standard curve calculation;
+\code{\link[=lm]{lm()}} for linear regression.
 }
 \keyword{telomeres}

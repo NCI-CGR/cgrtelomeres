@@ -10,13 +10,16 @@ Store aligned telomere and control data per experiment
 \section{Slots}{
 
 \describe{
-\item{\code{Analysis.Code}}{character vector describing alphabetic analysis code (A-H)}
+\item{\code{Analysis.Code}}{character vector describing alphabetic analysis
+code (A-H)}
 
 \item{\code{Cp.Telo}}{numeric vector of cycle threshold data for telomere data}
 
-\item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene data}
+\item{\code{Cp.Control}}{numeric vector of cycle threshold data for control gene
+data}
 
-\item{\code{Standard}}{numeric vector of standard concentration, or NA if not a standard sample}
+\item{\code{Standard}}{numeric vector of standard concentration, or NA if not a
+standard sample}
 
 \item{\code{Well.ID}}{character vector of well ID codes from Source Plate Contents}
 
@@ -24,12 +27,13 @@ Store aligned telomere and control data per experiment
 }}
 
 \examples{
-new("ExportDatum", Cp.Telo = runif(3, 0, 38),
-                   Cp.Control = runif(3, 0, 38),
-                   Standard = rep(NA, 3),
-                   Well.ID = rep(NA, 3),
-                   Vial.ID = rep(NA, 3))
-
+new("ExportDatum",
+  Cp.Telo = runif(3, 0, 38),
+  Cp.Control = runif(3, 0, 38),
+  Standard = rep(NA, 3),
+  Well.ID = rep(NA, 3),
+  Vial.ID = rep(NA, 3)
+)
 }
 \seealso{
 \code{\link[=read.export.datum]{read.export.datum()}} for loading data into \code{ExportDatum}

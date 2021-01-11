@@ -14,7 +14,8 @@ process.average(vec.rep1, vec.rep2, vec.rep3)
 \item{vec.rep3}{numeric vector of third replicate Ct data}
 }
 \value{
-numeric vector of vector-wise averages, with NA exclusion criteria applied
+numeric vector of vector-wise averages, with NA
+exclusion criteria applied
 }
 \description{
 \code{process.average} takes three replicates' data and combines vector-wise
@@ -23,13 +24,14 @@ most to be missing (flagged as NA).
 }
 \details{
 There is an implicit restriction that appears to be applied manually to the
-real data example, where conditions with fewer than two replicates are blanked.
-Hopefully, this should cover that situation, while allowing single dropouts.
+real data example, where conditions with fewer than two replicates are
+blanked. Hopefully, this should cover that situation, while allowing
+single dropouts.
 }
 \examples{
 vec.mean <- process.average(rnorm(10), rnorm(10), rnorm(10))
-
 }
 \seealso{
-\code{\link[=process.standard.deviation]{process.standard.deviation()}} for equivalent calculation with standard deviation.
+\code{\link[=process.standard.deviation]{process.standard.deviation()}} for equivalent calculation
+with standard deviation.
 }

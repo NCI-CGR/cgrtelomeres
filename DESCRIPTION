@@ -6,12 +6,13 @@ Authors@R:
            family = "Palmer",
            role = c("aut", "cre"),
            email = "cameron.palmer@nih.gov")
-Description: Process CGR lab telomere qPCR output into standard report formats.
+Description: Process CGR lab telomere qPCR output into standard
+    report formats.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
+Imports: 
+    openxlsx
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
-Imports: 
-    openxlsx
+RoxygenNote: 7.1.1

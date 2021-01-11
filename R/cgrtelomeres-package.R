@@ -1,5 +1,5 @@
 #' @details
-#' 
+#'
 #'
 #'
 "_PACKAGE"

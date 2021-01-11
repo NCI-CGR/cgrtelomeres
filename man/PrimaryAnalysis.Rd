@@ -15,6 +15,5 @@ use nonstandard well assignments, construct the class directly with new()
 }
 \examples{
 PrimaryAnalysis(Source.Well.ID = rep("", 309))
-
 }
 \keyword{telomeres}

@@ -11,7 +11,8 @@ extract.well.mappings(plate.list.data, plate.content.data, analysis.code)
 
 \item{plate.content.data}{Data frame of plate content report data}
 
-\item{analysis.code}{Character vector: case-sensitive letter \link{A-H} for run code}
+\item{analysis.code}{Character vector: case-sensitive letter \link{A-H}
+for run code}
 }
 \value{
 List with entries Rep1.Well, Rep2.Well, Rep3.Well, corresponding to
@@ -32,14 +33,23 @@ without further shuffling.
 \examples{
 content.filename <- "PlateContentReport_GP0317-TL1.xls"
 list.filename <- "PlateList_GP0317-TL1.xls"
-content.data <- openxlsx:read.xlsx(content.filename, sheet = 1, rowNames = FALSE, colNames = TRUE)
-list.data <- openxlsx::read.xlsx(list.filename, sheet = 1, rowNames = FALSE, colNames = TRUE)
+content.data <- openxlsx:read.xlsx(content.filename,
+  sheet = 1,
+  rowNames = FALSE, colNames = TRUE
+)
+list.data <- openxlsx::read.xlsx(list.filename,
+  sheet = 1,
+  rowNames = FALSE, colNames = TRUE
+)
 analysis.code <- "H"
-well.mappings <- extract.well.mappings(list.data, content.data, analysis.code)
-
+well.mappings <- extract.well.mappings(
+  list.data, content.data,
+  analysis.code
+)
 }
 \seealso{
-\code{\link[=create.analysis]{create.analysis()}} for calling function; \code{\link[openxlsx:read.xlsx]{openxlsx::read.xlsx()}} for
-an example of how to generate the plate list or content data frames.
+\code{\link[=create.analysis]{create.analysis()}} for calling function;
+\code{\link[openxlsx:read.xlsx]{openxlsx::read.xlsx()}} for an example of how to generate the plate
+list or content data frames.
 }
 \keyword{telomeres}

@@ -7,26 +7,32 @@
 find.input.files(path, telo.tag = "Telo", control.tag = "36B4")
 }
 \arguments{
-\item{path}{Character vector describing path to input file directory}
+\item{path}{Character vector describing path to input
+file directory}
 
-\item{telo.tag}{Character vector describing file tag for experimental condition}
+\item{telo.tag}{Character vector describing file tag
+for experimental condition}
 
-\item{control.tag}{Character vector describing file tag for control condition}
+\item{control.tag}{Character vector describing file
+tag for control condition}
 }
 \value{
 list of pairs of (telomere, control) files
 }
 \description{
-\code{find.input.files} scans a given directory for structured output from
-a lab telomere experiment and organizes them by experiment, control pairs.
+\code{find.input.files} scans a given directory for structured
+output from a lab telomere experiment and organizes them
+by experiment, control pairs.
 }
 \details{
-This function aggregates filenames and performs mild error checking on
-the existence of expected pairs of filenames. It will ignore any file
-present in the specified directory that does not match the expected general
-filename format. Paths should be specified using the R convention of "/" as the
-delimiter between directories (as opposed to the Windows convention of "\").
-This function should not be called directly by the end user.
+This function aggregates filenames and performs mild
+error checking on the existence of expected pairs of
+filenames. It will ignore any file present in the specified
+directory that does not match the expected general filename
+format. Paths should be specified using the R convention of
+"/" as the delimiter between directories (as opposed to the
+Windows convention of "\"). This function should not be
+called directly by the end user.
 }
 \examples{
 find.input.files("/path/to/Data/Exports")
