@@ -6,7 +6,8 @@
 \alias{cgrtelomeres-package}
 \title{cgrtelomeres: Automated Processing of Telomere qPCR Data}
 \description{
-Process CGR lab telomere qPCR output into standard report formats.
+Process CGR lab telomere qPCR output into standard
+    report formats.
 }
 \details{
 

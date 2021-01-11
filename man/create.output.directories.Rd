@@ -15,11 +15,10 @@ required for the standard output of the telomere protocol. If the top-level
 directory does not exist, it will also be created.
 }
 \details{
-The output directories are: top/Data/Analysis, top/Analysis/QC, top/Analysis/Final.
-This silently handles if said folders already exist.
+The output directories are: top/Data/Analysis, top/Analysis/QC,
+top/Analysis/Final. This silently handles if said folders already exist.
 }
 \examples{
 create.output.directories("C:/Users/palmercd/Documents/telomeres/results")
-
 }
 \keyword{telomeres}

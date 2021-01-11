@@ -1,0 +1,14 @@
+repos:
+- repo: https://github.com/lorenzwalthert/precommit
+  rev: v0.1.3
+  hooks:
+  - id: style-files
+  - id: parsable-R
+  - id: no-browser-statement
+  - id: spell-check
+  - id: roxygenize
+  - id: deps-in-desc
+  - id: use-tidy-description
+  - id: lintr
+    verbose: true
+

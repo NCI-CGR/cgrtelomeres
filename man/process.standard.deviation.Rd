@@ -18,27 +18,30 @@ process.standard.deviation(
 
 \item{vec.rep3}{numeric vector of third replicate Ct data}
 
-\item{use.sample.adjustment}{boolean of whether to use sqrt(N - 1) biased sample adjustment}
+\item{use.sample.adjustment}{boolean of whether to use sqrt(N - 1)
+biased sample adjustment}
 }
 \value{
-numeric vector of vector-wise averages, with NA exclusion criteria applied
+numeric vector of vector-wise averages, with NA exclusion
+criteria applied
 }
 \description{
-\code{process.standard.deviation} takes three replicates' data and combines vector-wise
-into standard deviations while allowing a single observation from each condition
-at most to be missing (flagged as NA).
+\code{process.standard.deviation} takes three replicates' data and
+combines vector-wise into standard deviations while allowing a
+single observation from each condition at most to be missing
+(flagged as NA).
 }
 \details{
 There is an implicit restriction that appears to be applied manually to the
-real data example, where conditions with fewer than two replicates are blanked.
-Hopefully, this should cover that situation, while allowing single dropouts.
-Strangely, the existing excel template uses sample standard deviation for telomere
-data and population standard deviation for control data. I don't know why this
-is the case but it's emulated here for the moment.
+real data example, where conditions with fewer than two replicates are
+blanked. Hopefully, this should cover that situation, while allowing
+single dropouts. Strangely, the existing excel template uses sample
+standard deviation for telomere data and population standard deviation
+for control data. I don't know why this is the case but it's emulated
+here for the moment.
 }
 \examples{
 vec.sd <- process.standard.deviation(rnorm(10), rnorm(10), rnorm(10))
-
 }
 \seealso{
 \code{\link[=process.average]{process.average()}} for equivalent calculation with mean

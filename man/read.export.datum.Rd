@@ -4,28 +4,58 @@
 \alias{read.export.datum}
 \title{Read and align Cp data for telomeres and controls in an experiment}
 \usage{
-read.export.datum(exp.control.filenames)
+read.export.datum(
+  exp.control.filenames,
+  source.search.path = NA,
+  subject.list.from.input.path = NA,
+  plate.content.report = NA,
+  plate.list = NA
+)
 }
 \arguments{
-\item{exp.control.filenames}{length-2 vector of filenames: one for Telo, one for 36B4}
+\item{exp.control.filenames}{Length-2 vector of filenames: one for
+Telo, one for 36B4}
+
+\item{source.search.path}{Character vector with path
+to test case Data/Analysis *.xlsx files}
+
+\item{subject.list.from.input.path}{Logical: whether to pull subject
+data from Data/Analysis/*xlsx of an existing analysis run}
+
+\item{plate.content.report}{Character vector of plate content report
+for project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA}
+
+\item{plate.list}{Character vector of plate list for project (e.g.
+"PlateList_GP0317-TL1.xls") or NA}
 }
 \value{
-an instance of S4 class \code{ExportDatum} containing aligned relevant information.
+An instance of S4 class \code{ExportDatum} containing aligned
+relevant information.
 }
 \description{
-\code{read.export.datum} reads a pair of exported files containing separated telomere and control
-data and aligns them for later use
+\code{read.export.datum} reads a pair of exported files containing separated
+telomere and control data and aligns them for later use
 }
 \details{
-This function removes extraneous metadata and provides mild control checking. It does
-not postprocess the data in any meaningful way. This function should not be called
-directly by the end user.
+This function removes extraneous metadata and provides mild control
+checking. It does not postprocess the data in any meaningful way.
+This function should not be called directly by the end user.
+
+Note that for workaround purposes while I'm figuring out how the end
+user is going to specify the evidently external location of the "Source
+Plate Contents" Data/Analysis pasted spreadsheet tab, I'm just going to
+pull the source plate contents from the existing spreadsheets. This will
+be removed at a future date, but allows development and testing to
+continue for the time being.
 }
 \examples{
-read.export.datum(c("Data/Exports/PC29625_A_Telo.txt", "Data/Exports/PC29624_A_36B4.txt"))
-
+read.export.datum(c(
+  "Data/Exports/PC29625_A_Telo.txt",
+  "Data/Exports/PC29624_A_36B4.txt"
+))
 }
 \seealso{
-\code{\link[=find.input.files]{find.input.files()}} for generating the expected input for this function.
+\code{\link[=find.input.files]{find.input.files()}} for generating the expected input for
+this function.
 }
 \keyword{telomeres}
