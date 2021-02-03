@@ -630,7 +630,8 @@ create.analysis <- function(export.datum,
   ## of internal control samples. without pasted sample data, I don't
   ## believe this is currently available information.
   ## so for the moment, just add placeholder values.
-  obj@Normalized.TS <- obj@TS.Ratio
+  obj@Normalized.TS <- obj@TS.Ratio /
+    mean(obj@TS.Ratio[obj@Internal.Control == 1])
   ## that's it?
   obj
 }
