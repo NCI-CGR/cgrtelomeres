@@ -44,7 +44,7 @@
 #' specify NA to suppress markdown output
 #' @return TBD
 #' @keywords telomeres
-#' @export
+#' @export process.experiment
 #' @examples
 #' process.experiment(
 #'   "Examples for Bioinformatics",

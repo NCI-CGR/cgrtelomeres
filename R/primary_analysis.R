@@ -36,12 +36,12 @@
 #' telomeric Ct values
 #' @slot SD.ExperimentalCt numeric vector of standard deviation of
 #' post-filtering telomeric Ct values
-#' @slot PerCV.ExperimentalCt numeric vector of [something] of
+#' @slot PerCV.ExperimentalCt numeric vector of
 #' post-filtering telomeric Ct values
 #' @slot Avg.ControlCt numeric vector of mean post-filtering control Ct values
 #' @slot SD.ControlCt numeric vector of standard deviation of post-filtering
 #' control Ct values
-#' @slot PerCV.ControlCt numeric vector of [something] of post-filtering
+#' @slot PerCV.ControlCt numeric vector of post-filtering
 #' control Ct values
 #' @slot Model.Experiment object of class lm, fit model for telomeric data
 #' @slot Model.Control object of class lm, fit model for control data
@@ -50,8 +50,7 @@
 #' @slot Fit.ControlConc numeric vector of exponential fit values from
 #' standard curve for control data
 #' @slot TS.Ratio numeric vector of ratio of telomeric to control fit
-#' @slot Normalized.TS numeric vector of TS ratio normalized to [something
-#' from controls]
+#' @slot Normalized.TS numeric vector of TS ratio normalized to controls
 #' @keywords telomeres
 #' @examples
 #' new("PrimaryAnalysis")

@@ -66,7 +66,7 @@ telomeric Ct values}
 \item{\code{SD.ExperimentalCt}}{numeric vector of standard deviation of
 post-filtering telomeric Ct values}
 
-\item{\code{PerCV.ExperimentalCt}}{numeric vector of \link{something} of
+\item{\code{PerCV.ExperimentalCt}}{numeric vector of
 post-filtering telomeric Ct values}
 
 \item{\code{Avg.ControlCt}}{numeric vector of mean post-filtering control Ct values}
@@ -74,7 +74,7 @@ post-filtering telomeric Ct values}
 \item{\code{SD.ControlCt}}{numeric vector of standard deviation of post-filtering
 control Ct values}
 
-\item{\code{PerCV.ControlCt}}{numeric vector of \link{something} of post-filtering
+\item{\code{PerCV.ControlCt}}{numeric vector of post-filtering
 control Ct values}
 
 \item{\code{Model.Experiment}}{object of class lm, fit model for telomeric data}
@@ -89,8 +89,7 @@ standard curve for control data}
 
 \item{\code{TS.Ratio}}{numeric vector of ratio of telomeric to control fit}
 
-\item{\code{Normalized.TS}}{numeric vector of TS ratio normalized to \link[=something
-from controls]{something from controls}}
+\item{\code{Normalized.TS}}{numeric vector of TS ratio normalized to controls}
 }}
 
 \examples{
