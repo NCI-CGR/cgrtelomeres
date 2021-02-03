@@ -67,7 +67,7 @@ report.primary.analysis <- function(primary.analysis,
     "Internal Control"
   output.df <- data.frame(
     primary.analysis@Source.Well.ID,
-    primary.analysis@Internal.Control,
+    internal.control.report,
     primary.analysis@Rep1.Well,
     primary.analysis@Rep2.Well,
     primary.analysis@Rep3.Well,

@@ -188,7 +188,6 @@ read.export.datum <- function(exp.control.filenames,
     target.contents$Well.ID <- as.vector(target.contents$Well.ID,
       mode = "character"
     )
-    target.contents <- target.contents[order(target.contents$Well.ID), ]
     obj@Well.ID <- target.contents$Well.ID
     obj@Vial.ID <- target.contents$Vial.ID
   } else {
