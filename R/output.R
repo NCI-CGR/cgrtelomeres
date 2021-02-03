@@ -91,7 +91,8 @@ report.primary.analysis <- function(primary.analysis,
     primary.analysis@PerCV.ControlCt,
     primary.analysis@Fit.ExperimentalConc,
     primary.analysis@Fit.ControlConc,
-    primary.analysis@TS.Ratio
+    primary.analysis@TS.Ratio,
+    primary.analysis@Normalized.TS
   )
   ## set the column names to approximately match those currently
   ## in the excel template
@@ -121,7 +122,8 @@ report.primary.analysis <- function(primary.analysis,
     "36B4 Ct %CV",
     "[Telo] from ER",
     "[36B4] from ER",
-    "T/S from ER"
+    "T/S from ER",
+    "Normalized T/S"
   )
   ## report data to file
   write.table(output.df, output.filename,
