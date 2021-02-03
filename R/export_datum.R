@@ -139,9 +139,8 @@ read.export.datum <- function(exp.control.filenames,
       as.vector(source.plate.contents[, "Well.ID"], mode = "character")
     source.plate.contents[, "Vial.ID"] <-
       as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
-    remove.index <- seq(-1, -7, -1)
-    obj@Well.ID <- source.plate.contents[remove.index, "Well.ID"]
-    obj@Vial.ID <- source.plate.contents[remove.index, "Vial.ID"]
+    obj@Well.ID <- source.plate.contents[, "Well.ID"]
+    obj@Vial.ID <- source.plate.contents[, "Vial.ID"]
   } else if (isTRUE(!is.na(plate.content.report)) &
     isTRUE(!is.na(plate.list))) {
     ## the caller provides enough information to pull data from
