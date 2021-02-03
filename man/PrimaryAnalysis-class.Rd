@@ -11,7 +11,7 @@ Store primary analysis results, processed from ExportDatum
 
 \describe{
 \item{\code{Analysis.Code}}{character vector describing alphabetic
-analysis code (A-H)}
+analysis code A-H}
 
 \item{\code{Source.Well.ID}}{factor of well IDs from source data}
 

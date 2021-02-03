@@ -11,7 +11,7 @@ extract.well.mappings(plate.list.data, plate.content.data, analysis.code)
 
 \item{plate.content.data}{Data frame of plate content report data}
 
-\item{analysis.code}{Character vector: case-sensitive letter \link{A-H}
+\item{analysis.code}{Character vector: case-sensitive letter A-H
 for run code}
 }
 \value{

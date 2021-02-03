@@ -1,7 +1,7 @@
 #' Store primary analysis results, processed from ExportDatum
 #'
 #' @slot Analysis.Code character vector describing alphabetic
-#' analysis code (A-H)
+#' analysis code A-H
 #' @slot Source.Well.ID factor of well IDs from source data
 #' @slot Internal.Control boolean vector of whether a sample is an
 #' internal control
@@ -322,7 +322,7 @@ compute.fit <- function(fit.model,
 #'
 #' @param plate.list.data Data frame of plate list data
 #' @param plate.content.data Data frame of plate content report data
-#' @param analysis.code Character vector: case-sensitive letter [A-H]
+#' @param analysis.code Character vector: case-sensitive letter A-H
 #' for run code
 #' @return List with entries Rep1.Well, Rep2.Well, Rep3.Well, corresponding to
 #' columns in the Data/Analysis/*xlsx files. Each will be a factor.
@@ -504,7 +504,7 @@ create.analysis <- function(export.datum,
       !is.na(plate.list)))
   ## instantiate
   obj <- PrimaryAnalysis()
-  ## store the analysis code (a letter from A-H) for output file conventions
+  ## store the analysis code, a letter from A-H, for output file conventions
   obj@Analysis.Code <- export.datum@Analysis.Code
   ## if infer.384.locations, map 96->384 well plates from plate content
   ## report and list in order to recompute names(obj@Rep[1-3].Well)
