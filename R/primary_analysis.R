@@ -512,7 +512,8 @@ create.analysis <- function(export.datum,
   obj <- PrimaryAnalysis()
   ## store the analysis code, a letter from A-H, for output file conventions
   obj@Analysis.Code <- export.datum@Analysis.Code
-  obj@Internal.Control[export.datum@Vial.ID %in% control.vials] <- 1
+  rem.ind <- seq(-1, -7, -1)
+  obj@Internal.Control[rem.ind][export.datum@Vial.ID %in% control.vials] <- 1
   ## if infer.384.locations, map 96->384 well plates from plate content
   ## report and list in order to recompute names(obj@Rep[1-3].Well)
   if (infer.384.locations & isTRUE(!is.na(plate.list)) &
