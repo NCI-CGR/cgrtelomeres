@@ -24,10 +24,17 @@ into a pretty and informative report.
 R has the capacity to install packages directly from
 GitHub. In R:
 
-`# depending on your system: install.packages("devtools")
-require(devtools)
-devtools::install_github("NCI-CGR/cgrtelomeres")
-require(cgrtelomeres)`
+`# the following step is only required if you don't have the 'devtools' package installed yet`
+
+`install.packages("devtools")`
+
+`# the following steps are always required when launching R`
+
+`require(devtools)`
+
+`devtools::install_github("NCI-CGR/cgrtelomeres")`
+
+`require(cgrtelomeres)`
 
 The primary entry point for the software is `cgrtelomeres::process.experiment`.
 You can get somewhat useful help documentation for this function
