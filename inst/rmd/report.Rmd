@@ -17,7 +17,7 @@ params:
 
 ```{r, eval=TRUE, echo=FALSE}
 ## if output directory path does not exist, create it
-cgrtelomeres::create.output.directories(output.path)
+create.output.directories(output.path)
 ```
 
 
@@ -76,7 +76,7 @@ primary.analysis <- lapply(input.data, function(i) {
 ```{r, eval=TRUE, echo=FALSE}
 ## report the primary analysis results to the output/Data/Analysis
 lapply(primary.analysis, function(i) {
-  cgrtelomeres::report.primary.analysis(i, output.path, project.id)
+  report.primary.analysis(i, output.path, project.id)
 })
 ```
 
