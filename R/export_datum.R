@@ -189,8 +189,9 @@ read.export.datum <- function(exp.control.filenames,
     target.contents$Well.ID <- as.vector(target.contents$Well.ID,
       mode = "character"
     )
-    obj@Well.ID <- target.contents$Well.ID
-    obj@Vial.ID <- target.contents$Vial.ID
+    remove.index <- seq(-1, -7, -1)
+    obj@Well.ID <- target.contents$Well.ID[remove.index]
+    obj@Vial.ID <- target.contents$Vial.ID[remove.index]
   } else {
     stop(paste("In read.export.datum(), no valid method for pulling ",
       "source plate contents detected",
