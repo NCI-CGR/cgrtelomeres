@@ -21,22 +21,12 @@ into a pretty and informative report.
 
 ### Installation and Execution
 
-R theoretically has the capacity to install packages directly from
-gitlab. However, due to what appear to be API version issues, this 
-is not currently working for me from CGR's gitlab. Hopefully
-migration to another host will resolve this issue in the coming months.
-
-For the moment, the following should work (from the NIH network):
-
-`git clone --branch default http://10.133.130.114/palmercd/cgrtelomeres.git`
-
-This will clone the project into a subdirectory of your current
-directory called `cgrtelomeres`. You can then install this package
-from within R with the following commands:
+R has the capacity to install packages directly from
+GitHub. In R:
 
 `# depending on your system: install.packages("devtools")
 require(devtools)
-install("cgrtelomeres")
+devtools::install_github("NCI-CGR/cgrtelomeres")
 require(cgrtelomeres)`
 
 The primary entry point for the software is `cgrtelomeres::process.experiment`.
@@ -53,6 +43,7 @@ so it's safe to use in place; just make sure `"output_dir"` doesn't point
 to anything important with existing workflow output.
 
 ### Version History
+ * 03 February 2021: migrated to NCI-CGR GitHub from GitLab.
 
- * 09 October 2020 (current version, not frozen): it minimally produces the output
+ * 09 October 2020: it minimally produces the output
  of Data/Analysis but it's not pretty. Plots and testing not implemented.
