@@ -148,6 +148,10 @@ PrimaryAnalysis <- function(...) {
       sep = "-"
     )
   ))
+  obj@Internal.Control <- rep(
+    0,
+    length(obj@Source.Well.ID)
+  )
   obj
 }
 
@@ -474,6 +478,7 @@ extract.well.mappings <- function(plate.list.data,
 #' "PlateList_GP0317-TL1.xls") or NA
 #' @param infer.384.locations Logical: whether to assume fixed 96->384
 #' well mapping
+#' @param control.vials Character vector of internal control vial IDs
 #' @return a PrimaryAnalysis object containing the processed results
 #' for the input
 #' @keywords telomeres
@@ -486,7 +491,8 @@ extract.well.mappings <- function(plate.list.data,
 create.analysis <- function(export.datum,
                             plate.content.report = NA,
                             plate.list = NA,
-                            infer.384.locations = FALSE) {
+                            infer.384.locations = FALSE,
+                            control.vials = c("NA07057")) {
   ## basic input error checking: redundant with process.experiment
   ## but good practice regardless
   stopifnot((is.vector(plate.content.report, mode = "character") &
@@ -506,6 +512,7 @@ create.analysis <- function(export.datum,
   obj <- PrimaryAnalysis()
   ## store the analysis code, a letter from A-H, for output file conventions
   obj@Analysis.Code <- export.datum@Analysis.Code
+  obj@Internal.Control[export.datum@Vial.ID %in% control.vials] <- 1
   ## if infer.384.locations, map 96->384 well plates from plate content
   ## report and list in order to recompute names(obj@Rep[1-3].Well)
   if (infer.384.locations & isTRUE(!is.na(plate.list)) &

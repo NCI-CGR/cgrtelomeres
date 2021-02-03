@@ -8,7 +8,8 @@ create.analysis(
   export.datum,
   plate.content.report = NA,
   plate.list = NA,
-  infer.384.locations = FALSE
+  infer.384.locations = FALSE,
+  control.vials = c("NA07057")
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ project (e.g. "PlateContentReport_GP0317-TL1.xls") or NA}
 
 \item{infer.384.locations}{Logical: whether to assume fixed 96->384
 well mapping}
+
+\item{control.vials}{Character vector of internal control vial IDs}
 }
 \value{
 a PrimaryAnalysis object containing the processed results

@@ -62,8 +62,12 @@ report.primary.analysis <- function(primary.analysis,
     sep = ""
   )
   ## combine data in a data frame for reporting convenience
+  internal.control.report <- rep("", length(primary.analysis@Internal.Control))
+  internal.control.report[primary.analysis@Internal.Control == 1] <-
+    "Internal Control"
   output.df <- data.frame(
     primary.analysis@Source.Well.ID,
+    primary.analysis@Internal.Control,
     primary.analysis@Rep1.Well,
     primary.analysis@Rep2.Well,
     primary.analysis@Rep3.Well,
@@ -93,6 +97,7 @@ report.primary.analysis <- function(primary.analysis,
   ## in the excel template
   colnames(output.df) <- c(
     "Source Well ID",
+    "Internal Control",
     "Rep 1 Well",
     "Rep 2 Well",
     "Rep 3 Well",
