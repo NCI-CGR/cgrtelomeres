@@ -194,7 +194,7 @@ for (i in 1:length(primary.analysis)) {
   r2.telo <- summary(pa@Model.Experiment)$r.squared
   int.cont <- summary(pa@Model.Control)$coeff[1, 1]
   slope.cont <- summary(pa@Model.Control)$coeff[2, 1]
-  r2.cont <- summary(pa$Model.Control)$r.squared
+  r2.cont <- summary(pa@Model.Control)$r.squared
   telo.data <- data.frame(
     x = fixed.concs,
     y = telo
