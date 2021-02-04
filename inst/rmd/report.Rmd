@@ -242,7 +242,7 @@ for (i in 1:length(primary.analysis)) {
     "(standard concentrations)"))
   plot.cont <- plot.cont + ggplot2::ylab(expression("log"[2] *
     "(36B4 observations)"))
-  plot.cont <- plot.cont + ggtitle(paste(project.id, "_",
+  plot.cont <- plot.cont + ggplot2::ggtitle(paste(project.id, "_",
     pa@Analysis.Code,
     " 36B4 Curve",
     sep = ""
