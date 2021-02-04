@@ -11,12 +11,20 @@ Store primary analysis results, processed from ExportDatum
 
 \describe{
 \item{\code{Analysis.Code}}{character vector describing alphabetic
-analysis code (A-H)}
+analysis code A-H}
 
 \item{\code{Source.Well.ID}}{factor of well IDs from source data}
 
 \item{\code{Internal.Control}}{boolean vector of whether a sample is an
 internal control}
+
+\item{\code{Source.Plate.ID}}{character vector of Intermediate Source Plate ID}
+
+\item{\code{Well.ID}}{character vector of source plate well ID}
+
+\item{\code{Sample.ID}}{character vector of sample ID}
+
+\item{\code{Vial.ID}}{character vector of vial ID}
 
 \item{\code{Rep1.Well}}{factor of 384 well plate locations for each first replicate}
 
@@ -66,7 +74,7 @@ telomeric Ct values}
 \item{\code{SD.ExperimentalCt}}{numeric vector of standard deviation of
 post-filtering telomeric Ct values}
 
-\item{\code{PerCV.ExperimentalCt}}{numeric vector of \link{something} of
+\item{\code{PerCV.ExperimentalCt}}{numeric vector of
 post-filtering telomeric Ct values}
 
 \item{\code{Avg.ControlCt}}{numeric vector of mean post-filtering control Ct values}
@@ -74,7 +82,7 @@ post-filtering telomeric Ct values}
 \item{\code{SD.ControlCt}}{numeric vector of standard deviation of post-filtering
 control Ct values}
 
-\item{\code{PerCV.ControlCt}}{numeric vector of \link{something} of post-filtering
+\item{\code{PerCV.ControlCt}}{numeric vector of post-filtering
 control Ct values}
 
 \item{\code{Model.Experiment}}{object of class lm, fit model for telomeric data}
@@ -89,8 +97,7 @@ standard curve for control data}
 
 \item{\code{TS.Ratio}}{numeric vector of ratio of telomeric to control fit}
 
-\item{\code{Normalized.TS}}{numeric vector of TS ratio normalized to \link[=something
-from controls]{something from controls}}
+\item{\code{Normalized.TS}}{numeric vector of TS ratio normalized to controls}
 }}
 
 \examples{

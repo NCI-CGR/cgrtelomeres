@@ -21,7 +21,12 @@ data}
 \item{\code{Standard}}{numeric vector of standard concentration, or NA if not a
 standard sample}
 
+\item{\code{Source.Plate.ID}}{character vector of Intermediate Source Plate ID}
+
 \item{\code{Well.ID}}{character vector of well ID codes from Source Plate Contents}
+
+\item{\code{Sample.ID}}{character vector of sample ID codes from Source Plate
+Contents}
 
 \item{\code{Vial.ID}}{character vector of vial ID codes from Source Plate Contents}
 }}

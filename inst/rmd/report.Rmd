@@ -1,23 +1,43 @@
 ---
 title: "Report Template for CGR Telomere Analysis"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 params:
   input.path: ""
   output.path: ""
   project.id: ""
   plate.content.report: ""
   plate.list: ""
+  final.tsv: ""
   infer.384.locations: FALSE
   subject.list.from.input.path: TRUE
 ---
 
 ---
+# Set global ggplot2 theme
+---
+
+```{r ggplottheme, eval=TRUE, echo=TRUE}
+my.theme <- ggplot2::theme_light() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 14, hjust = 0.5),
+    axis.title = ggplot2::element_text(size = 12),
+    axis.text = ggplot2::element_text(size = 10),
+    legend.title = ggplot2::element_text(size = 12),
+    legend.text = ggplot2::element_text(size = 10),
+    strip.background = ggplot2::element_blank(),
+    strip.text = ggplot2::element_text(size = 12, colour = "black")
+  )
+```
+
+---
 # Make sure required output directory structure exists
 ---
 
-```{r eval=TRUE echo=FALSE}
+```{r create.output.directories, eval=TRUE, echo=TRUE}
 ## if output directory path does not exist, create it
-cgrtelomeres::create.output.directories(output.path)
+create.output.directories(output.path)
 ```
 
 
@@ -25,7 +45,7 @@ cgrtelomeres::create.output.directories(output.path)
 # Detect input files based on fixed input directory structure
 ---
 
-```{r eval=TRUE echo=FALSE}
+```{r find.input.files, eval=TRUE, echo=TRUE}
 ## aggregate pairs of filenames from input.path/Data/Exports
 input.files <- find.input.files(paste(input.path, "Data",
   "Exports",
@@ -38,7 +58,7 @@ input.files <- find.input.files(paste(input.path, "Data",
 # Load data from detected input files
 ---
 
-```{r eval=TRUE echo=FALSE}
+```{r load.exported.data, eval=TRUE, echo=TRUE}
 ## load data from acquired pairs of files
 input.data <- lapply(input.files, function(i) {
   read.export.datum(i,
@@ -58,7 +78,7 @@ input.data <- lapply(input.files, function(i) {
 # Run primary analysis generation on loaded data
 ---
 
-```{r eval=TRUE echo=FALSE}
+```{r run.primary.analysis, eval=TRUE, echo=TRUE}
 ## run primary analysis steps for Data/Analysis
 primary.analysis <- lapply(input.data, function(i) {
   create.analysis(i,
@@ -73,17 +93,380 @@ primary.analysis <- lapply(input.data, function(i) {
 # Report primary analysis results to file
 ---
 
-```{r eval=TRUE echo=FALSE}
+```{r report.primary.analysis, eval=TRUE, echo=TRUE, results=FALSE}
 ## report the primary analysis results to the output/Data/Analysis
 lapply(primary.analysis, function(i) {
-  cgrtelomeres::report.primary.analysis(i, output.path, project.id)
+  report.primary.analysis(i, output.path, project.id)
 })
 ```
 
 ---
-# Placeholder final block, to report run success
+# Report final summary table
+---
+```{r report.final.table, eval=TRUE, echo=TRUE}
+## report the final summary table of combined data across primary analyses
+res <- rbind()
+for (i in 1:length(primary.analysis)) {
+  res <- rbind(
+    res,
+    format.final.analysis(
+      primary.analysis[[i]],
+      project.id
+    )
+  )
+}
+is.techrep <- duplicated(res[, "Sample ID"]) |
+  duplicated(res[, "Sample ID"], fromLast = TRUE)
+is.ntc <- res[, "Sample Type"] == "Negative Control"
+is.control <- res[, "Sample Type"] == "Internal Control"
+res[is.techrep &
+  !is.ntc &
+  !is.control, "Sample Type"] <-
+  "Technical Replicate"
+
+res <- res[!is.na(res[, "Vial ID"]) &
+  !is.na(res[, "Sample ID"]), ]
+write.table(res,
+  final.tsv,
+  row.names = FALSE,
+  col.names = TRUE,
+  quote = FALSE,
+  sep = "\t"
+)
+```
+
+---
+# Compute ICC
+---
+```{r icc, eval=TRUE, echo=TRUE}
+## extract subject dups only
+res.dups <- res[res[, "Vial ID"] != "NA07057" &
+  res[, "Sample ID"] != "NTC", ]
+completion.rate <- length(which(!is.na(res.dups[, "Standardized T/S Ratio"])))
+completion.rate <- completion.rate / nrow(res.dups) * 100
+telo.cv <- mean(res.dups[, "Telo %CV"], na.rm = TRUE)
+control.cv <- mean(res.dups[, "36B4 %CV"], na.rm = TRUE)
+unique.study.samples <- length(unique(res.dups[, "Sample ID"]))
+res.dups <- res.dups[duplicated(res.dups[, "Sample ID"]) |
+  duplicated(res.dups[, "Sample ID"], fromLast = TRUE), ]
+n.tech.reps <- length(unique(res.dups[, "Sample ID"]))
+## compute ICC to match existing method
+ICC.est <- ICC::ICCest(
+  factor(res.dups[, "Sample ID"]),
+  res.dups[, "Standardized T/S Ratio"]
+)
+```
+
+---
+# Report first summary text
 ---
 
-```{r eval=TRUE echo=FALSE}
-print("all done for now")
+## Samples
+
+A total of `r unique.study.samples` unique study samples were run 
+in this project. CGR Internal Controls (NA07057) were added to five
+of those wells and water (NTC) was added to one of those wells.
+A total of `r nrow(res)` sample instances in the project were tested
+across `r length(unique(res[, "Intermediate Source Plate ID"]))`
+sets of plates.
+
+ - Overall completion rate of study samples: 
+   `r round(completion.rate, 2)`%
+ - Average %CV for Telo assay triplicates:
+   `r round(telo.cv, 3)`%
+ - Average %CV for 36B4 assay triplicates:
+   `r round(control.cv, 3)`%
+ - Technical replicates in project (n=`r n.tech.reps`), 
+   `r round(n.tech.reps/unique.study.samples*100,1)`%
+
+
+---
+# Report per-plate exponential fit
+---
+
+## Plate Standard Curves
+
+```{r plate.fit, eval=TRUE, echo=TRUE}
+fit.group <- c()
+fit.intercept.telo <- c()
+fit.slope.telo <- c()
+fit.r2.telo <- c()
+fit.intercept.control <- c()
+fit.slope.control <- c()
+fit.r2.control <- c()
+fixed.concs <- log2(c(4, 1.6, 0.64, 0.256, 0.1024, 0.041))
+for (i in 1:length(primary.analysis)) {
+  pa <- primary.analysis[[i]]
+  telo <- log2(pa@Avg.ExperimentalCt[1:6])
+  cont <- log2(pa@Avg.ControlCt[1:6])
+  int.telo <- summary(pa@Model.Experiment)$coeff[1, 1]
+  slope.telo <- summary(pa@Model.Experiment)$coeff[2, 1]
+  r2.telo <- summary(pa@Model.Experiment)$r.squared
+  int.cont <- summary(pa@Model.Control)$coeff[1, 1]
+  slope.cont <- summary(pa@Model.Control)$coeff[2, 1]
+  r2.cont <- summary(pa@Model.Control)$r.squared
+  telo.data <- data.frame(
+    x = fixed.concs,
+    y = telo
+  )
+  plot.telo <- ggplot2::ggplot(ggplot2::aes(
+    x = .data$x,
+    y = .data$y
+  ),
+  data = telo.data
+  )
+  plot.x <- fixed.concs[1]
+  plot.xend <- fixed.concs[length(fixed.concs)]
+  plot.y <- int.telo + slope.telo * fixed.concs[1]
+  plot.yend <- int.telo + slope.telo *
+    fixed.concs[length(fixed.concs)]
+  plot.telo <- plot.telo + my.theme
+  plot.telo <- plot.telo + ggplot2::geom_point(colour = "blue")
+  plot.telo <- plot.telo + ggplot2::geom_segment(
+    x = plot.x,
+    xend = plot.xend,
+    y = plot.y,
+    yend = plot.yend
+  )
+  plot.telo <- plot.telo + ggplot2::scale_y_continuous(limits = c(0, 5))
+  plot.telo <- plot.telo + ggplot2::xlab(expression("log"[2] *
+    "(standard concentrations)"))
+  plot.telo <- plot.telo + ggplot2::ylab(expression("log"[2] *
+    "(telomere observations)"))
+  plot.telo <- plot.telo + ggplot2::ggtitle(paste(project.id, "_",
+    pa@Analysis.Code,
+    " Telomere Curve",
+    sep = ""
+  ))
+  print(plot.telo)
+
+  cont.data <- data.frame(
+    x = fixed.concs,
+    y = cont
+  )
+  plot.cont <- ggplot2::ggplot(ggplot2::aes(
+    x = .data$x,
+    y = .data$y
+  ),
+  data = cont.data
+  )
+  plot.x <- fixed.concs[1]
+  plot.xend <- fixed.concs[length(fixed.concs)]
+  plot.y <- int.cont + slope.cont * fixed.concs[1]
+  plot.yend <- int.cont + slope.cont *
+    fixed.concs[length(fixed.concs)]
+  plot.cont <- plot.cont + my.theme
+  plot.cont <- plot.cont + ggplot2::geom_point(colour = "red")
+  plot.cont <- plot.cont + ggplot2::geom_segment(
+    x = plot.x,
+    xend = plot.xend,
+    y = plot.y,
+    yend = plot.yend
+  )
+  plot.cont <- plot.cont + ggplot2::scale_y_continuous(limits = c(0, 5))
+  plot.cont <- plot.cont + ggplot2::xlab(expression("log"[2] *
+    "(standard concentrations)"))
+  plot.cont <- plot.cont + ggplot2::ylab(expression("log"[2] *
+    "(36B4 observations)"))
+  plot.cont <- plot.cont + ggplot2::ggtitle(paste(project.id, "_",
+    pa@Analysis.Code,
+    " 36B4 Curve",
+    sep = ""
+  ))
+  print(plot.cont)
+
+  fit.group <- c(
+    fit.group,
+    paste(project.id, "_", pa@Analysis.Code, sep = "")
+  )
+  fit.intercept.telo <- c(
+    fit.intercept.telo,
+    int.telo
+  )
+  fit.slope.telo <- c(
+    fit.slope.telo,
+    slope.telo
+  )
+  fit.r2.telo <- c(
+    fit.r2.telo,
+    r2.telo
+  )
+  fit.intercept.control <- c(
+    fit.intercept.control,
+    int.cont
+  )
+  fit.slope.control <- c(
+    fit.slope.control,
+    slope.cont
+  )
+  fit.r2.control <- c(
+    fit.r2.control,
+    r2.cont
+  )
+}
+fit.report <- data.frame(
+  Group = fit.group,
+  Telomere.Intercept = fit.intercept.telo,
+  Telomere.Slope = fit.slope.telo,
+  Telomere.r2 = fit.r2.telo,
+  Control.Intercept = fit.intercept.control,
+  Control.Slope = fit.slope.control,
+  Control.r2 = fit.r2.control
+)
+print(fit.report)
+```
+
+
+---
+# Compute information about internal controls
+---
+
+```{r internal.controls, eval=TRUE, echo=TRUE}
+res.int <- res[res[, "Vial ID"] == "NA07057", ]
+mean.cv.data <- res.int[, "Raw T/S Ratio"]
+mean.cv <- 100 * sd(mean.cv.data, na.rm = TRUE) /
+  mean(mean.cv.data, na.rm = TRUE)
+
+box.data <- data.frame(
+  x = factor(rep(res.int[, "Intermediate Source Plate ID"], 2)),
+  y = c(
+    res.int[, "Raw T/S Ratio"],
+    res.int[, "Standardized T/S Ratio"]
+  ),
+  outtype = rep(c(
+    "Raw T/S Ratio",
+    "Standardized T/S Ratio"
+  ),
+  each = nrow(res.int)
+  )
+)
+cv.box <- ggplot2::ggplot(ggplot2::aes(
+  x = .data$x,
+  y = .data$y,
+  outtype = .data$outtype
+),
+data = box.data
+)
+cv.box <- cv.box + my.theme
+cv.box <- cv.box + ggplot2::geom_boxplot(ggplot2::aes(
+  x = .data$x,
+  y = .data$y
+))
+cv.box <- cv.box + ggplot2::geom_jitter(
+  shape = 16,
+  position = ggplot2::position_jitter(0.2)
+)
+cv.box <- cv.box + ggplot2::scale_y_continuous(
+  limits = c(0, 3),
+  breaks = seq(0, 3, 0.5)
+)
+cv.box <- cv.box + ggplot2::theme(
+  axis.text.x =
+    ggplot2::element_text(
+      size = 10,
+      angle = 90
+    )
+)
+cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
+cv.box <- cv.box + ggplot2::ylab("")
+cv.box <- cv.box + ggplot2::facet_grid(.data$outtype ~ .)
+```
+
+---
+# Report on internal controls
+---
+
+## Internal Controls
+
+The CGR Internal Control, which is used to standardize the raw T/S ratios for all samples
+within each plate of the project, had an overall CV of `r round(mean.cv, 3)`%.
+
+---
+# Render the CV boxplot
+---
+
+```{r render.cv.boxplot, eval=TRUE, echo=TRUE}
+print(cv.box)
+```
+
+---
+# Compute information on technical replicates
+---
+
+```{r compute.techrep, eval=TRUE, echo=TRUE}
+techrep.data <- data.frame(
+  y = res.dups[, "Standardized T/S Ratio"],
+  x = res.dups[, "Sample ID"]
+)
+## assign each sample its average value for plotting
+tech.samples <- unique(techrep.data$x)
+tech.values <- c()
+for (id in tech.samples) {
+  tech.values <- c(
+    tech.values,
+    mean(techrep.data[techrep.data$x == id, "y"],
+      na.rm = TRUE
+    )
+  )
+}
+tech.samples <- tech.samples[order(tech.values)]
+techrep.data$x <- factor(techrep.data$x, levels = tech.samples)
+techrep.plot <- ggplot2::ggplot(ggplot2::aes(
+  x = .data$x,
+  y = .data$y
+),
+data = techrep.data
+)
+techrep.plot <- techrep.plot + my.theme
+techrep.plot <- techrep.plot + ggplot2::theme(axis.text.x = ggplot2::element_blank())
+techrep.plot <- techrep.plot + ggplot2::geom_point()
+techrep.plot <- techrep.plot + ggplot2::xlab("")
+techrep.plot <- techrep.plot + ggplot2::ylab("Standardized T/S Ratio")
+```
+
+---
+# Report on Technical Replicates
+---
+
+The distribution of standardized T/S ratios from the technical replicates
+between plates can be seen below. The intraclass correlation coefficient (ICC)
+and its 95% confidence interval were `r round(ICC.est$ICC, 3)` 
+(`r round(ICC.est$LowerCI, 3)`,`r round(ICC.est$UpperCI, 3)`).
+
+
+---
+# Render the technical replicate scatterplot
+---
+
+```{r render.techrep.scatterplot, eval=TRUE, echo=TRUE}
+print(techrep.plot)
+```
+
+---
+# Report technical replicate data for easier lookup
+---
+
+```{r report.techrep.data, eval=TRUE, echo=FALSE}
+first.techrep <- techrep.data[duplicated(techrep.data$x), ]
+first.techrep$x <- as.vector(first.techrep$x, mode = "character")
+first.techrep <- first.techrep[order(first.techrep$x), ]
+second.techrep <- techrep.data[duplicated(techrep.data$x, fromLast = TRUE), ]
+second.techrep$x <- as.vector(second.techrep$x, mode = "character")
+second.techrep <- second.techrep[order(second.techrep$x), ]
+combined.techrep <- data.frame(
+  Sample.ID = first.techrep$x,
+  Smaller.Value = first.techrep$y,
+  Larger.Value = second.techrep$y
+)
+combined.na <- combined.techrep[is.na(combined.techrep$Smaller.Value) |
+  is.na(combined.techrep$Larger.Value), ]
+combined.techrep <- combined.techrep[!is.na(combined.techrep$Smaller.Value) &
+  !is.na(combined.techrep$Larger.Value), ]
+
+problem.ind <- combined.techrep$Smaller.Value > combined.techrep$Larger.Value
+tmp <- combined.techrep$Smaller.Value[problem.ind]
+combined.techrep$Smaller.Value[problem.ind] <-
+  combined.techrep$Larger.Value[problem.ind]
+combined.techrep$Larger.Value[problem.ind] <- tmp
+print(rbind(combined.techrep, combined.na))
 ```

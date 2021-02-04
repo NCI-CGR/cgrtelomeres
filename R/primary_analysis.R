@@ -1,10 +1,14 @@
 #' Store primary analysis results, processed from ExportDatum
 #'
 #' @slot Analysis.Code character vector describing alphabetic
-#' analysis code (A-H)
+#' analysis code A-H
 #' @slot Source.Well.ID factor of well IDs from source data
 #' @slot Internal.Control boolean vector of whether a sample is an
 #' internal control
+#' @slot Source.Plate.ID character vector of Intermediate Source Plate ID
+#' @slot Well.ID character vector of source plate well ID
+#' @slot Sample.ID character vector of sample ID
+#' @slot Vial.ID character vector of vial ID
 #' @slot Rep1.Well factor of 384 well plate locations for each first replicate
 #' @slot Rep2.Well factor of 384 well plate locations for each second replicate
 #' @slot Rep3.Well factor of 384 well plate locations for each third replicate
@@ -36,12 +40,12 @@
 #' telomeric Ct values
 #' @slot SD.ExperimentalCt numeric vector of standard deviation of
 #' post-filtering telomeric Ct values
-#' @slot PerCV.ExperimentalCt numeric vector of [something] of
+#' @slot PerCV.ExperimentalCt numeric vector of
 #' post-filtering telomeric Ct values
 #' @slot Avg.ControlCt numeric vector of mean post-filtering control Ct values
 #' @slot SD.ControlCt numeric vector of standard deviation of post-filtering
 #' control Ct values
-#' @slot PerCV.ControlCt numeric vector of [something] of post-filtering
+#' @slot PerCV.ControlCt numeric vector of post-filtering
 #' control Ct values
 #' @slot Model.Experiment object of class lm, fit model for telomeric data
 #' @slot Model.Control object of class lm, fit model for control data
@@ -50,8 +54,7 @@
 #' @slot Fit.ControlConc numeric vector of exponential fit values from
 #' standard curve for control data
 #' @slot TS.Ratio numeric vector of ratio of telomeric to control fit
-#' @slot Normalized.TS numeric vector of TS ratio normalized to [something
-#' from controls]
+#' @slot Normalized.TS numeric vector of TS ratio normalized to controls
 #' @keywords telomeres
 #' @examples
 #' new("PrimaryAnalysis")
@@ -59,6 +62,10 @@ setClass("PrimaryAnalysis", slots = list(
   Analysis.Code = "vector",
   Source.Well.ID = "factor",
   Internal.Control = "vector",
+  Source.Plate.ID = "vector",
+  Well.ID = "vector",
+  Sample.ID = "vector",
+  Vial.ID = "vector",
   Rep1.Well = "factor",
   Rep2.Well = "factor",
   Rep3.Well = "factor",
@@ -149,6 +156,10 @@ PrimaryAnalysis <- function(...) {
       sep = "-"
     )
   ))
+  obj@Internal.Control <- rep(
+    0,
+    length(obj@Source.Well.ID)
+  )
   obj
 }
 
@@ -323,7 +334,7 @@ compute.fit <- function(fit.model,
 #'
 #' @param plate.list.data Data frame of plate list data
 #' @param plate.content.data Data frame of plate content report data
-#' @param analysis.code Character vector: case-sensitive letter [A-H]
+#' @param analysis.code Character vector: case-sensitive letter A-H
 #' for run code
 #' @return List with entries Rep1.Well, Rep2.Well, Rep3.Well, corresponding to
 #' columns in the Data/Analysis/*xlsx files. Each will be a factor.
@@ -475,6 +486,7 @@ extract.well.mappings <- function(plate.list.data,
 #' "PlateList_GP0317-TL1.xls") or NA
 #' @param infer.384.locations Logical: whether to assume fixed 96->384
 #' well mapping
+#' @param control.vials Character vector of internal control vial IDs
 #' @return a PrimaryAnalysis object containing the processed results
 #' for the input
 #' @keywords telomeres
@@ -487,7 +499,8 @@ extract.well.mappings <- function(plate.list.data,
 create.analysis <- function(export.datum,
                             plate.content.report = NA,
                             plate.list = NA,
-                            infer.384.locations = FALSE) {
+                            infer.384.locations = FALSE,
+                            control.vials = c("NA07057")) {
   ## basic input error checking: redundant with process.experiment
   ## but good practice regardless
   stopifnot((is.vector(plate.content.report, mode = "character") &
@@ -505,8 +518,11 @@ create.analysis <- function(export.datum,
       !is.na(plate.list)))
   ## instantiate
   obj <- PrimaryAnalysis()
-  ## store the analysis code (a letter from A-H) for output file conventions
+  ## store the analysis code, a letter from A-H, for output file conventions
   obj@Analysis.Code <- export.datum@Analysis.Code
+  obj@Internal.Control[export.datum@Vial.ID %in% control.vials] <- 1
+
+
   ## if infer.384.locations, map 96->384 well plates from plate content
   ## report and list in order to recompute names(obj@Rep[1-3].Well)
   if (infer.384.locations & isTRUE(!is.na(plate.list)) &
@@ -547,6 +563,13 @@ create.analysis <- function(export.datum,
   }
   ## implied remaining condition is use predicted well assignments,
   ## which is constructed by default
+
+  ## additional fields required for final report
+  obj@Source.Plate.ID <- export.datum@Source.Plate.ID
+  obj@Well.ID <- export.datum@Well.ID
+  obj@Sample.ID <- export.datum@Sample.ID
+  obj@Vial.ID <- export.datum@Vial.ID
+
 
   ## load Cp data from export datum at the appropriate wells
   obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]
@@ -595,6 +618,13 @@ create.analysis <- function(export.datum,
     FALSE
   )
   obj@PerCV.ControlCt <- 100 * obj@SD.ControlCt / obj@Avg.ControlCt
+  ## apply coefficient of variation filtering
+  ## evidently they use a cutoff of >2 to remove bad replicates
+  CV.threshold <- 2
+  CV.exclude <- obj@PerCV.ControlCt > CV.threshold |
+    obj@PerCV.ExperimentalCt > CV.threshold
+  obj@Avg.ExperimentalCt[CV.exclude] <- NA
+  obj@Avg.ControlCt[CV.exclude] <- NA
   ## must run exponential regressions against the standard lanes.
   ## now, it *appears* that the standard concentrations are predefined
   ## in the excel template, and are likely fixed across experiments.
@@ -623,7 +653,8 @@ create.analysis <- function(export.datum,
   ## of internal control samples. without pasted sample data, I don't
   ## believe this is currently available information.
   ## so for the moment, just add placeholder values.
-  obj@Normalized.TS <- obj@TS.Ratio
+  obj@Normalized.TS <- obj@TS.Ratio /
+    mean(obj@TS.Ratio[obj@Internal.Control == 1], na.rm = TRUE)
   ## that's it?
   obj
 }

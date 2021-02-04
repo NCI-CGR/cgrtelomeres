@@ -1,6 +1,6 @@
 Package: cgrtelomeres
 Title: Automated Processing of Telomere qPCR Data
-Version: 0.0.0.1
+Version: 1.0.0
 Authors@R: 
     person(given = "Cameron",
            family = "Palmer",
@@ -8,9 +8,10 @@ Authors@R:
            email = "cameron.palmer@nih.gov")
 Description: Process CGR lab telomere qPCR output into standard
     report formats.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+License: MIT + file LICENSE
 Imports: 
+    ggplot2,
+    ICC,
     openxlsx,
     rmarkdown
 Encoding: UTF-8
