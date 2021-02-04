@@ -115,6 +115,15 @@ for (i in 1:length(primary.analysis)) {
     )
   )
 }
+is.techrep <- duplicated(res[, "Sample ID"]) |
+  duplicated(res[, "Sample ID"], fromLast = TRUE)
+is.ntc <- res[, "Sample Type"] == "Negative Control"
+is.control <- res[, "Sample Type"] == "Internal Control"
+res[is.techrep &
+  !is.ntc &
+  !is.control, "Sample Type"] <-
+  "Technical Replicate"
+
 res <- res[!is.na(res[, "Vial ID"]) &
   !is.na(res[, "Sample ID"]), ]
 write.table(res,
