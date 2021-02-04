@@ -47,6 +47,7 @@ create.output.directories <- function(top.path) {
 format.final.analysis <- function(primary.analysis,
                                   project.id) {
   max.index <- length(primary.analysis@Well.ID)
+  max.seq <- seq_len(max.index)
   res <- data.frame(
     rep(project.id, max.index),
     primary.analysis@Source.Plate.ID,
@@ -54,13 +55,15 @@ format.final.analysis <- function(primary.analysis,
     primary.analysis@Well.ID,
     primary.analysis@Sample.ID,
     primary.analysis@Vial.ID,
-    tail(primary.analysis@PerCV.ExperimentalCt, n = max.index),
-    tail(primary.analysis@PerCV.ControlCt, n = max.index),
-    tail(primary.analysis@Fit.ExperimentalConc, n = max.index),
-    tail(primary.analysis@Fit.ControlConc, n = max.index),
-    tail(primary.analysis@TS.Ratio, n = max.index),
-    tail(primary.analysis@Normalized.TS, n = max.index)
+    primary.analysis@PerCV.ExperimentalCt[max.seq],
+    primary.analysis@PerCV.ControlCt[max.seq],
+    primary.analysis@Fit.ExperimentalConc[max.seq],
+    primary.analysis@Fit.ControlConc[max.seq],
+    primary.analysis@TS.Ratio[max.seq],
+    primary.analysis@Normalized.TS[max.seq]
   )
+  rem.ind <- seq(-1, -7, -1)
+  res <- res[rem.ind, ]
   colnames(res) <- c(
     "Project ID",
     "Intermediate Source Plate ID",

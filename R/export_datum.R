@@ -154,17 +154,22 @@ read.export.datum <- function(exp.control.filenames,
       )
     source.plate.contents[, "Vial.ID"] <-
       as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
-    max.index <- nrow(source.plate.contents)
-    which.na <- which(is.na(source.plate.contents[, "Sample/PooledSample.ID"]) &
-      is.na(source.plate.contents[, "Vial.ID"]))
-    if (length(which.na) > 0) {
-      max.index <- min(which.na) - 1
-    }
-    keep.rows <- seq_len(max.index)
-    obj@Source.Plate.ID <- source.plate.contents[keep.rows, "Plate.ID"]
-    obj@Well.ID <- source.plate.contents[keep.rows, "Well.ID"]
-    obj@Sample.ID <- source.plate.contents[keep.rows, "Sample/PooledSample.ID"]
-    obj@Vial.ID <- source.plate.contents[keep.rows, "Vial.ID"]
+    obj@Source.Plate.ID <- c(
+      rep(NA, 7),
+      source.plate.contents[, "Plate.ID"]
+    )
+    obj@Well.ID <- c(
+      rep(NA, 7),
+      source.plate.contents[, "Well.ID"]
+    )
+    obj@Sample.ID <- c(
+      rep(NA, 7),
+      source.plate.contents[, "Sample/PooledSample.ID"]
+    )
+    obj@Vial.ID <- c(
+      rep(NA, 7),
+      source.plate.contents[, "Vial.ID"]
+    )
   } else if (isTRUE(!is.na(plate.content.report)) &
     isTRUE(!is.na(plate.list))) {
     ## the caller provides enough information to pull data from
@@ -213,10 +218,22 @@ read.export.datum <- function(exp.control.filenames,
     target.contents$Well.ID <- as.vector(target.contents$Well.ID,
       mode = "character"
     )
-    obj@Source.Plate.ID <- target.contents$Plate.ID
-    obj@Well.ID <- target.contents$Well.ID
-    obj@Sample.ID <- target.contents$Sample.ID
-    obj@Vial.ID <- target.contents$Vial.ID
+    obj@Source.Plate.ID <- c(
+      rep(NA, 7),
+      target.contents$Plate.ID
+    )
+    obj@Well.ID <- c(
+      rep(NA, 7),
+      target.contents$Well.ID
+    )
+    obj@Sample.ID <- c(
+      rep(NA, 7),
+      target.contents$Sample.ID
+    )
+    obj@Vial.ID <- c(
+      rep(NA, 7),
+      target.contents$Vial.ID
+    )
   } else {
     stop(paste("In read.export.datum(), no valid method for pulling ",
       "source plate contents detected",
