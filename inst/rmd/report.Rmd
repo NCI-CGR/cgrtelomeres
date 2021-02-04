@@ -196,7 +196,7 @@ cv.box <- ggplot2::ggplot(ggplot2::aes(
 data = box.data
 )
 cv.box <- cv.box + my.theme
-cv.box <- cv.box + ggplot2::geom_boxplot(aes(
+cv.box <- cv.box + ggplot2::geom_boxplot(ggplot2::aes(
   x = .data$x,
   y = .data$y
 ))
