@@ -47,6 +47,16 @@ create.output.directories <- function(top.path) {
 format.final.analysis <- function(primary.analysis,
                                   project.id) {
   max.index <- length(primary.analysis@Well.ID)
+  ## combine data in a data frame for reporting convenience
+  internal.control.report <- rep("", length(primary.analysis@Internal.Control))
+  internal.control.report[primary.analysis@Internal.Control == 1] <-
+    "Internal Control"
+  is.techrep <- duplicated(primary.analysis@Sample.ID) |
+    duplicated(primary.analysis@Sample.ID, fromLast = TRUE)
+  internal.control.report[is.techrep] <-
+    "Technical Replicate"
+  internal.control.report[primary.analysis@Sample.ID == "NTC"] <-
+    "Negative Control"
   max.seq <- seq_len(max.index)
   res <- data.frame(
     rep(project.id, max.index),
@@ -55,6 +65,7 @@ format.final.analysis <- function(primary.analysis,
     primary.analysis@Well.ID,
     primary.analysis@Sample.ID,
     primary.analysis@Vial.ID,
+    internal.control.report,
     primary.analysis@PerCV.ExperimentalCt[max.seq],
     primary.analysis@PerCV.ControlCt[max.seq],
     primary.analysis@Fit.ExperimentalConc[max.seq],
@@ -71,6 +82,7 @@ format.final.analysis <- function(primary.analysis,
     "Well ID",
     "Sample ID",
     "Vial ID",
+    "Sample Type",
     "Telo %CV",
     "36B4 %CV",
     "[Telo]",
