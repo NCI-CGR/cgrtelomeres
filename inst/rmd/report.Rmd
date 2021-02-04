@@ -237,7 +237,7 @@ tech.values <- c()
 for (id in tech.samples) {
   tech.values <- c(
     tech.values,
-    mean(techrep.data[techrep.data$x == id, y],
+    mean(techrep.data[techrep.data$x == id, "y"],
       na.rm = TRUE
     )
   )
