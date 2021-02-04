@@ -181,7 +181,7 @@ box.data <- data.frame(
     res.int[, "Raw T/S Ratio"],
     res.int[, "Standardized T/S Ratio"]
   ),
-  group = rep(c(
+  outtype = rep(c(
     "Raw T/S Ratio",
     "Standardized T/S Ratio"
   ),
@@ -191,7 +191,7 @@ box.data <- data.frame(
 cv.box <- ggplot2::ggplot(ggplot2::aes(
   x = .data$x,
   y = .data$y,
-  group = .data$group
+  outtype = .data$outtype
 ),
 data = box.data
 )
@@ -212,12 +212,12 @@ cv.box <- cv.box + ggplot2::theme(
   axis.text.x =
     ggplot2::element_text(
       size = 10,
-      angle = -90
+      angle = 90
     )
 )
 cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
 cv.box <- cv.box + ggplot2::ylab("")
-cv.box <- cv.box + ggplot2::facet_grid(.data$group ~ .)
+cv.box <- cv.box + ggplot2::facet_grid(.data$outtype ~ .)
 ```
 
 ---
