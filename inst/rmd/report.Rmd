@@ -131,11 +131,11 @@ write.table(res,
 ## extract subject dups only
 res.dups <- res[res[, "Vial ID"] != "NA07057" &
   res[, "Sample ID"] != "NTC", ]
-completion.rate <- length(which(!is.na(res.dups[, "Standardized.T/S.Ratio"])))
+completion.rate <- length(which(!is.na(res.dups[, "Standardized T/S Ratio"])))
 completion.rate <- completion.rate / nrow(res.dups) * 100
 telo.cv <- mean(res.dups[, "Telo %CV"], na.rm = TRUE)
 control.cv <- mean(res.dups[, "36B4 %CV"], na.rm = TRUE)
-unique.study.samples <- length(which(unique(res.dups[, "Sample.ID"])))
+unique.study.samples <- length(which(unique(res.dups[, "Sample ID"])))
 res.dups <- res.dups[duplicated(res.dups[, "Sample ID"]) |
   duplicated(res.dups[, "Sample ID"], fromLast = TRUE), ]
 n.tech.reps <- length(which(unique(res.dups[, "Sample ID"])))
