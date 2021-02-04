@@ -46,22 +46,21 @@ create.output.directories <- function(top.path) {
 #' PrimaryAnalysis objects.
 format.final.analysis <- function(primary.analysis,
                                   project.id) {
+  max.index <- length(primary.analysis@Well.ID)
   res <- data.frame(
-    rep(project.id, 96),
-    tail(primary.analysis@Source.Plate.ID, n = 96),
-    tail(primary.analysis@Analysis.Code, n = 96),
-    tail(primary.analysis@Well.ID, n = 96),
-    tail(primary.analysis@Sample.ID, n = 96),
-    tail(primary.analysis@Vial.ID, n = 96),
-    tail(primary.analysis@PerCV.ExperimentalCt, n = 96),
-    tail(primary.analysis@PerCV.ControlCt, n = 96),
-    tail(primary.analysis@Fit.ExperimentalConc, n = 96),
-    tail(primary.analysis@Fit.ControlConc, n = 96),
-    tail(primary.analysis@TS.Ratio, n = 96),
-    tail(primary.analysis@Normalized.TS, n = 96)
+    rep(project.id, max.index),
+    primary.analysis@Source.Plate.ID,
+    rep(primary.analysis@Analysis.Code, max.index),
+    primary.analysis@Well.ID,
+    primary.analysis@Sample.ID,
+    primary.analysis@Vial.ID,
+    tail(primary.analysis@PerCV.ExperimentalCt, n = max.index),
+    tail(primary.analysis@PerCV.ControlCt, n = max.index),
+    tail(primary.analysis@Fit.ExperimentalConc, n = max.index),
+    tail(primary.analysis@Fit.ControlConc, n = max.index),
+    tail(primary.analysis@TS.Ratio, n = max.index),
+    tail(primary.analysis@Normalized.TS, n = max.index)
   )
-  remove.index <- seq(-1, -7, -1)
-  res <- res[remove.index, ]
   colnames(res) <- c(
     "Project ID",
     "Intermediate Source Plate ID",
@@ -146,6 +145,7 @@ report.primary.analysis <- function(primary.analysis,
     primary.analysis@TS.Ratio,
     primary.analysis@Normalized.TS
   )
+  output.df <- output.df[seq_len(length(primary.analysis@Well.ID)), ]
   ## set the column names to approximately match those currently
   ## in the excel template
   colnames(output.df) <- c(

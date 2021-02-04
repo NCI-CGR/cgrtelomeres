@@ -648,7 +648,7 @@ create.analysis <- function(export.datum,
   ## believe this is currently available information.
   ## so for the moment, just add placeholder values.
   obj@Normalized.TS <- obj@TS.Ratio /
-    mean(obj@TS.Ratio[obj@Internal.Control == 1])
+    mean(obj@TS.Ratio[obj@Internal.Control == 1], na.rm = TRUE)
   ## that's it?
   obj
 }

@@ -103,7 +103,11 @@ process.experiment <- function(input.path,
   )
   rmarkdown::render(rmarkdown.template,
     output_file = markdown.html,
-    output_dir = ".",
+    output_dir = paste(output.path,
+      "Analysis",
+      "Final",
+      sep = "/"
+    ),
     params = list(
       input.path = input.path,
       output.path = output.path,
