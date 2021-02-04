@@ -19,13 +19,13 @@ params:
 ```{r ggplottheme, eval=TRUE, echo=FALSE}
 my.theme <- ggplot2::theme_light() +
   ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 18, hjust = 0.5),
-    axis.title = ggplot2::element_text(size = 16),
-    axis.text = ggplot2::element_text(size = 14),
-    legend.title = ggplot2::element_text(size = 16),
-    legend.text = ggplot2::element_text(size = 14),
+    plot.title = ggplot2::element_text(size = 14, hjust = 0.5),
+    axis.title = ggplot2::element_text(size = 12),
+    axis.text = ggplot2::element_text(size = 10),
+    legend.title = ggplot2::element_text(size = 12),
+    legend.text = ggplot2::element_text(size = 10),
     strip.background = ggplot2::element_blank(),
-    strip.text = ggplot2::element_text(size = 16, colour = "black")
+    strip.text = ggplot2::element_text(size = 12, colour = "black")
   )
 ```
 
@@ -176,7 +176,7 @@ sets of plates.
 res.int <- res[res[, "Vial ID"] == "NA07057", ]
 mean.cv <- mean(res.int[, "Telo %CV"], na.rm = TRUE)
 box.data <- data.frame(
-  x = rep(res.int[, "Intermediate Source Plate ID"], 2),
+  x = factor(rep(res.int[, "Intermediate Source Plate ID"], 2)),
   y = c(
     res.int[, "Raw T/S Ratio"],
     res.int[, "Standardized T/S Ratio"]
@@ -196,10 +196,17 @@ cv.box <- ggplot2::ggplot(ggplot2::aes(
 data = box.data
 )
 cv.box <- cv.box + my.theme
-cv.box <- cv.box + ggplot2::geom_boxplot()
+cv.box <- cv.box + ggplot2::geom_boxplot(aes(
+  x = .data$x,
+  y = .data$y
+))
 cv.box <- cv.box + ggplot2::geom_jitter(
   shape = 16,
   position = ggplot2::position_jitter(0.2)
+)
+cv.box <- cv.box + ggplot2::scale_y_continuous(
+  limits = c(0, 3),
+  breaks = seq(0, 3, 0.5)
 )
 cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
 cv.box <- cv.box + ggplot2::ylab("")
@@ -252,6 +259,8 @@ techrep.plot <- ggplot2::ggplot(ggplot2::aes(
 data = techrep.data
 )
 techrep.plot <- techrep.plot + my.theme
+techrep.plot <- techrep.plot + ggplot2::theme(axis.text.x = ggplot2::element_blank())
+techrep.plot <- techrep.plot + ggplot2::geom_point()
 techrep.plot <- techrep.plot + ggplot2::xlab("")
 techrep.plot <- techrep.plot + ggplot2::ylab("Standardized T/S Ratio")
 ```
