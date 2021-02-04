@@ -296,7 +296,7 @@ print(techrep.plot)
 # Report technical replicate data for easier lookup
 ---
 
-```{r report.techrep.data, eval=TRUE, echo=TRUE, results='hide'}
+```{r report.techrep.data, eval=TRUE, echo=FALSE}
 first.techrep <- techrep.data[duplicated(techrep.data$x), ]
 first.techrep$x <- as.vector(first.techrep$x, mode = "character")
 first.techrep <- first.techrep[order(first.techrep$x), ]
