@@ -206,12 +206,20 @@ for (i in 1:length(primary.analysis)) {
   ),
   data = telo.data
   )
+  plot.x <- fixed.concs[1]
+  plot.xend <- fixed.concs[length(fixed.concs)]
+  plot.y <- int.telo + slope.telo * fixed.concs[1]
+  plot.yend <- int.telo + slope.telo *
+    fixed.concs[length(fixed.concs)]
   plot.telo <- plot.telo + my.theme
   plot.telo <- plot.telo + ggplot2::geom_point(colour = "red")
-  plot.telo <- plot.telo + ggplot2::geom_abline(
-    slope = slope.telo,
-    intercept = int.telo
+  plot.telo <- plot.telo + ggplot2::geom_segment(
+    x = plot.x,
+    xend = plot.xend,
+    y = plot.y,
+    yend = plot.yend
   )
+  plot.telo <- plot.telo + ggplot2::scale_y_continuous(limits = c(0, 5))
   plot.telo <- plot.telo + ggplot2::xlab(expression("log"[2] *
     "(standard concentrations)"))
   plot.telo <- plot.telo + ggplot2::ylab(expression("log"[2] *
@@ -233,12 +241,20 @@ for (i in 1:length(primary.analysis)) {
   ),
   data = cont.data
   )
+  plot.x <- fixed.concs[1]
+  plot.xend <- fixed.concs[length(fixed.concs)]
+  plot.y <- int.cont + slope.cont * fixed.concs[1]
+  plot.yend <- int.cont + slope.cont *
+    fixed.concs[length(fixed.concs)]
   plot.cont <- plot.cont + my.theme
   plot.cont <- plot.cont + ggplot2::geom_point(colour = "red")
-  plot.cont <- plot.cont + ggplot2::geom_abline(
-    slope = slope.cont,
-    intercept = int.cont
+  plot.cont <- plot.cont + ggplot2::geom_segment(
+    x = plot.x,
+    xend = plot.xend,
+    y = plot.y,
+    yend = plot.yend
   )
+  plot.cont <- plot.cont + ggplot2::scale_y_continuous(limits = c(0, 5))
   plot.cont <- plot.cont + ggplot2::xlab(expression("log"[2] *
     "(standard concentrations)"))
   plot.cont <- plot.cont + ggplot2::ylab(expression("log"[2] *
