@@ -11,6 +11,8 @@ Description: Process CGR lab telomere qPCR output into standard
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
 Imports: 
+    ggplot2,
+    ICC,
     openxlsx,
     rmarkdown
 Encoding: UTF-8
