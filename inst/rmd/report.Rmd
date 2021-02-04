@@ -149,7 +149,7 @@ ICC.est <- ICC::ICCest(
 ```
 
 ---
-# Report first summary blob
+# Report first summary text
 ---
 
 ## Samples
@@ -169,6 +169,123 @@ sets of plates.
    `r round(control.cv, 3)`%
  - Technical replicates in project (n=`r n.tech.reps`), 
    `r round(n.tech.reps/unique.study.samples*100,1)`%
+
+
+---
+# Report per-plate exponential fit
+---
+
+## Plate Standard Curves
+
+```{r plate.fit, eval=TRUE, echo=TRUE}
+fit.intercept.telo <- c()
+fit.slope.telo <- c()
+fit.r2.telo <- c()
+fit.intercept.control <- c()
+fit.slope.control <- c()
+fit.r2.control <- c()
+fixed.concs <- log2(c(4, 1.6, 0.64, 0.256, 0.1024, 0.041))
+for (i in 1:length(primary.analysis)) {
+  pa <- primary.analysis[[i]]
+  telo <- log2(pa@Avg.ExperimentalCt[1:6])
+  cont <- log2(pa@Avg.ControlCt[1:6])
+  int.telo <- summary(pa@Model.Experiment)$coeff[1, 1]
+  slope.telo <- summary(pa@Model.Experiment)$coeff[2, 1]
+  r2.telo <- summary(pa@Model.Experiment)$r.squared
+  int.cont <- summary(pa@Model.Control)$coeff[1, 1]
+  slope.cont <- summary(pa@Model.Control)$coeff[2, 1]
+  r2.cont <- summary(pa$Model.Control)$r.squared
+  telo.data <- data.frame(
+    x = fixed.concs,
+    y = telo
+  )
+  plot.telo <- ggplot2::ggplot(ggplot2::aes(
+    x = .data$x,
+    y = .data$y
+  ),
+  data = telo.data
+  )
+  plot.telo <- plot.telo + my.theme
+  plot.telo <- plot.telo + ggplot2::geom_point(colour = "red")
+  plot.telo <- plot.telo + ggplot2::geom_abline(
+    slope = slope.telo,
+    intercept = int.telo
+  )
+  plot.telo <- plot.telo + xlab(expression("log"[2] * "(standard concentrations)"))
+  plot.telo <- plot.telo + ylab(expression("log"[2] * "(telomere observations)"))
+  plot.telo <- plot.telo + ggtitle(paste(project.id, "_",
+    pa@Analysis.Code,
+    " Telomere Curve",
+    sep = ""
+  ))
+  print(plot.telo)
+
+  cont.data <- data.frame(
+    x = fixed.concs,
+    y = cont
+  )
+  plot.cont <- ggplot2::ggplot(ggplot2::aes(
+    x = .data$x,
+    y = .data$y
+  ),
+  data = cont.data
+  )
+  plot.cont <- plot.cont + my.theme
+  plot.cont <- plot.cont + ggplot2::geom_point(colour = "red")
+  plot.cont <- plot.cont + ggplot2::geom_abline(
+    slope = slope.cont,
+    intercept = int.cont
+  )
+  plot.cont <- plot.cont + xlab(expression("log"[2] * "(standard concentrations)"))
+  plot.cont <- plot.cont + ylab(expression("log"[2] * "(36B4 observations)"))
+  plot.cont <- plot.cont + ggtitle(paste(project.id, "_",
+    pa@Analysis.Code,
+    " 36B4 Curve",
+    sep = ""
+  ))
+  print(plot.cont)
+
+  fit.group <- c(
+    fit.group,
+    paste(project.id, "_", pa@Analysis.Code, sep = "")
+  )
+  fit.intercept.telo <- c(
+    fit.intercept.telo,
+    int.telo
+  )
+  fit.slope.telo <- c(
+    fit.slope.telo,
+    slope.telo
+  )
+  fit.r2.telo <- c(
+    fit.r2.telo,
+    r2.telo
+  )
+  fit.intercept.control <- c(
+    fit.intercept.control,
+    int.cont
+  )
+  fit.slope.control <- c(
+    fit.slope.control,
+    slope.cont
+  )
+  fit.r2.control <- c(
+    fit.r2.control,
+    r2.cont
+  )
+}
+fit.report <- data.frame(
+  Group = fit.group,
+  Telomere.Intercept = fit.intercept.telo,
+  Telomere.Slope = fit.slope.telo,
+  Telomere.r2 = fit.r2.telo,
+  Control.Intercept = fit.intercept.control,
+  Control.Slope = fit.slope.control,
+  Control.r2 = fit.r2.control
+)
+print(fit.report)
+```
+
 
 ---
 # Compute information about internal controls
