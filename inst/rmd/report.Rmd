@@ -208,6 +208,13 @@ cv.box <- cv.box + ggplot2::scale_y_continuous(
   limits = c(0, 3),
   breaks = seq(0, 3, 0.5)
 )
+cv.box <- cv.box + ggplot2::theme(
+  axis.text.x =
+    ggplot2::element_text(
+      size = 10,
+      angle = -90
+    )
+)
 cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
 cv.box <- cv.box + ggplot2::ylab("")
 cv.box <- cv.box + ggplot2::facet_grid(.data$group ~ .)
@@ -227,6 +234,7 @@ within each plate of the project, had an overall CV of `r round(mean.cv, 3)`%.
 ---
 
 ```{r render.cv.boxplot, eval=TRUE, echo=FALSE}
+print(box.data)
 print(cv.box)
 ```
 
@@ -271,8 +279,8 @@ techrep.plot <- techrep.plot + ggplot2::ylab("Standardized T/S Ratio")
 
 The distribution of standardized T/S ratios from the technical replicates
 between plates can be seen below. The intraclass correlation coefficient (ICC)
-and its 95% confidence interval were `r ICC.est$ICC` 
-(`r ICC.est$LowerCI`,`r ICC.est$UpperCI`).
+and its 95% confidence interval were `r round(ICC.est$ICC, 3)` 
+(`r round(ICC.est$LowerCI, 3)`,`r round(ICC.est$UpperCI, 3)`).
 
 
 ---
@@ -281,14 +289,4 @@ and its 95% confidence interval were `r ICC.est$ICC`
 
 ```{r render.techrep.scatterplot, eval=TRUE, echo=FALSE}
 print(techrep.plot)
-```
-
-
-
----
-# Placeholder final block, to report run success
----
-
-```{r, eval=TRUE, echo=FALSE}
-print("all done for now")
 ```
