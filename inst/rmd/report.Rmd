@@ -212,7 +212,7 @@ for (i in 1:length(primary.analysis)) {
   plot.yend <- int.telo + slope.telo *
     fixed.concs[length(fixed.concs)]
   plot.telo <- plot.telo + my.theme
-  plot.telo <- plot.telo + ggplot2::geom_point(colour = "red")
+  plot.telo <- plot.telo + ggplot2::geom_point(colour = "blue")
   plot.telo <- plot.telo + ggplot2::geom_segment(
     x = plot.x,
     xend = plot.xend,
@@ -314,7 +314,10 @@ print(fit.report)
 
 ```{r internal.controls, eval=TRUE, echo=TRUE}
 res.int <- res[res[, "Vial ID"] == "NA07057", ]
-mean.cv <- mean(res.int[, "Telo %CV"], na.rm = TRUE)
+mean.cv.data <- res.int[, "Raw T/S Ratio"]
+mean.cv <- 100 * sd(mean.cv.data, na.rm = TRUE) /
+  mean(mean.cv.data, na.rm = TRUE)
+
 box.data <- data.frame(
   x = factor(rep(res.int[, "Intermediate Source Plate ID"], 2)),
   y = c(
