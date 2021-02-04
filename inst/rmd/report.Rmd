@@ -178,6 +178,7 @@ sets of plates.
 ## Plate Standard Curves
 
 ```{r plate.fit, eval=TRUE, echo=TRUE}
+fit.group <- c()
 fit.intercept.telo <- c()
 fit.slope.telo <- c()
 fit.r2.telo <- c()
