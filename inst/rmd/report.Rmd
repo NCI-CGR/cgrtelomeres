@@ -203,6 +203,7 @@ cv.box <- cv.box + ggplot2::geom_jitter(
 )
 cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
 cv.box <- cv.box + ggplot2::ylab("")
+cv.box <- cv.box + ggplot2::facet_grid(.data$group ~ .)
 ```
 
 ---
