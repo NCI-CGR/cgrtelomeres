@@ -154,10 +154,17 @@ read.export.datum <- function(exp.control.filenames,
       )
     source.plate.contents[, "Vial.ID"] <-
       as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
-    obj@Source.Plate.ID <- source.plate.contents[, "Plate.ID"]
-    obj@Well.ID <- source.plate.contents[, "Well.ID"]
-    obj@Sample.ID <- source.plate.contents[, "Sample/PooledSample.ID"]
-    obj@Vial.ID <- source.plate.contents[, "Vial.ID"]
+    max.index <- nrow(source.plate.contents)
+    which.na <- which(is.na(source.plate.contents[, "Sample/PooledSample.ID"]) &
+      is.na(source.plate.contents[, "Vial.ID"]))
+    if (length(which.na) > 0) {
+      max.index <- min(which.na) - 1
+    }
+    keep.rows <- seq_len(max.index)
+    obj@Source.Plate.ID <- source.plate.contents[keep.rows, "Plate.ID"]
+    obj@Well.ID <- source.plate.contents[keep.rows, "Well.ID"]
+    obj@Sample.ID <- source.plate.contents[keep.rows, "Sample/PooledSample.ID"]
+    obj@Vial.ID <- source.plate.contents[keep.rows, "Vial.ID"]
   } else if (isTRUE(!is.na(plate.content.report)) &
     isTRUE(!is.na(plate.list))) {
     ## the caller provides enough information to pull data from
