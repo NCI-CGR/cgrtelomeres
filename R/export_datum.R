@@ -141,20 +141,22 @@ read.export.datum <- function(exp.control.filenames,
     stopifnot(length(which(colnames(source.plate.contents) ==
       "Well.ID")) == 1)
     stopifnot(length(which(colnames(source.plate.contents) ==
-      "Sample.ID")) == 1)
+      "Sample/PooledSample.ID")) == 1)
     stopifnot(length(which(colnames(source.plate.contents) ==
       "Vial.ID")) == 1)
     source.plate.contents[, "Plate.ID"] <-
       as.vector(source.plate.contents[, "Plate.ID"], mode = "character")
     source.plate.contents[, "Well.ID"] <-
       as.vector(source.plate.contents[, "Well.ID"], mode = "character")
-    source.plate.contents[, "Sample.ID"] <-
-      as.vector(source.plate.contents[, "Sample.ID"], mode = "character")
+    source.plate.contents[, "Sample/PooledSample.ID"] <-
+      as.vector(source.plate.contents[, "Sample/PooledSample.ID"],
+        mode = "character"
+      )
     source.plate.contents[, "Vial.ID"] <-
       as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
     obj@Source.Plate.ID <- source.plate.contents[, "Plate.ID"]
     obj@Well.ID <- source.plate.contents[, "Well.ID"]
-    obj@Sample.ID <- source.plate.contents[, "Sample.ID"]
+    obj@Sample.ID <- source.plate.contents[, "Sample/PooledSample.ID"]
     obj@Vial.ID <- source.plate.contents[, "Vial.ID"]
   } else if (isTRUE(!is.na(plate.content.report)) &
     isTRUE(!is.na(plate.list))) {
