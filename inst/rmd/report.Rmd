@@ -1,6 +1,8 @@
 ---
 title: "Report Template for CGR Telomere Analysis"
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 params:
   input.path: ""
   output.path: ""
@@ -16,7 +18,7 @@ params:
 # Set global ggplot2 theme
 ---
 
-```{r ggplottheme, eval=TRUE, echo=FALSE}
+```{r ggplottheme, eval=TRUE, echo=TRUE}
 my.theme <- ggplot2::theme_light() +
   ggplot2::theme(
     plot.title = ggplot2::element_text(size = 14, hjust = 0.5),
@@ -33,7 +35,7 @@ my.theme <- ggplot2::theme_light() +
 # Make sure required output directory structure exists
 ---
 
-```{r create.output.directories, eval=TRUE, echo=FALSE}
+```{r create.output.directories, eval=TRUE, echo=TRUE}
 ## if output directory path does not exist, create it
 create.output.directories(output.path)
 ```
@@ -43,7 +45,7 @@ create.output.directories(output.path)
 # Detect input files based on fixed input directory structure
 ---
 
-```{r find.input.files, eval=TRUE, echo=FALSE}
+```{r find.input.files, eval=TRUE, echo=TRUE}
 ## aggregate pairs of filenames from input.path/Data/Exports
 input.files <- find.input.files(paste(input.path, "Data",
   "Exports",
@@ -56,7 +58,7 @@ input.files <- find.input.files(paste(input.path, "Data",
 # Load data from detected input files
 ---
 
-```{r load.exported.data, eval=TRUE, echo=FALSE}
+```{r load.exported.data, eval=TRUE, echo=TRUE}
 ## load data from acquired pairs of files
 input.data <- lapply(input.files, function(i) {
   read.export.datum(i,
@@ -76,7 +78,7 @@ input.data <- lapply(input.files, function(i) {
 # Run primary analysis generation on loaded data
 ---
 
-```{r run.primary.analysis, eval=TRUE, echo=FALSE}
+```{r run.primary.analysis, eval=TRUE, echo=TRUE}
 ## run primary analysis steps for Data/Analysis
 primary.analysis <- lapply(input.data, function(i) {
   create.analysis(i,
@@ -91,7 +93,7 @@ primary.analysis <- lapply(input.data, function(i) {
 # Report primary analysis results to file
 ---
 
-```{r report.primary.analysis, eval=TRUE, echo=FALSE}
+```{r report.primary.analysis, eval=TRUE, echo=TRUE, results=FALSE}
 ## report the primary analysis results to the output/Data/Analysis
 lapply(primary.analysis, function(i) {
   report.primary.analysis(i, output.path, project.id)
@@ -101,7 +103,7 @@ lapply(primary.analysis, function(i) {
 ---
 # Report final summary table
 ---
-```{r report.final.table, eval=TRUE, echo=FALSE}
+```{r report.final.table, eval=TRUE, echo=TRUE}
 ## report the final summary table of combined data across primary analyses
 res <- rbind()
 for (i in 1:length(primary.analysis)) {
@@ -127,7 +129,7 @@ write.table(res,
 ---
 # Compute ICC
 ---
-```{r icc, eval=TRUE, echo=FALSE}
+```{r icc, eval=TRUE, echo=TRUE}
 ## extract subject dups only
 res.dups <- res[res[, "Vial ID"] != "NA07057" &
   res[, "Sample ID"] != "NTC", ]
@@ -172,7 +174,7 @@ sets of plates.
 # Compute information about internal controls
 ---
 
-```{r internal.controls, eval=TRUE, echo=FALSE}
+```{r internal.controls, eval=TRUE, echo=TRUE}
 res.int <- res[res[, "Vial ID"] == "NA07057", ]
 mean.cv <- mean(res.int[, "Telo %CV"], na.rm = TRUE)
 box.data <- data.frame(
@@ -233,8 +235,7 @@ within each plate of the project, had an overall CV of `r round(mean.cv, 3)`%.
 # Render the CV boxplot
 ---
 
-```{r render.cv.boxplot, eval=TRUE, echo=FALSE}
-print(box.data)
+```{r render.cv.boxplot, eval=TRUE, echo=TRUE}
 print(cv.box)
 ```
 
@@ -242,7 +243,7 @@ print(cv.box)
 # Compute information on technical replicates
 ---
 
-```{r compute.techrep, eval=TRUE, echo=FALSE}
+```{r compute.techrep, eval=TRUE, echo=TRUE}
 techrep.data <- data.frame(
   y = res.dups[, "Standardized T/S Ratio"],
   x = res.dups[, "Sample ID"]
@@ -287,6 +288,23 @@ and its 95% confidence interval were `r round(ICC.est$ICC, 3)`
 # Render the technical replicate scatterplot
 ---
 
-```{r render.techrep.scatterplot, eval=TRUE, echo=FALSE}
+```{r render.techrep.scatterplot, eval=TRUE, echo=TRUE}
 print(techrep.plot)
+```
+
+---
+# Report technical replicate data for easier lookup
+---
+
+```{r report.techrep.data, eval=TRUE, echo=TRUE}
+first.techrep <- techrep.data[duplicated(techrep.data$x), ]
+first.techrep <- first.techrep[order(first.techrep$x), ]
+second.techrep <- techrep.data[duplicated(techrep.data$x, fromLast = TRUE), ]
+second.techrep <- second.techrep[order(second.techrep$x), ]
+combined.techrep <- data.frame(
+  Sample.ID = first.techrep$x,
+  Value = first.techrep$y,
+  Other = second.techrep$y
+)
+print(combined.techrep)
 ```
