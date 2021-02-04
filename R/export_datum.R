@@ -217,9 +217,5 @@ read.export.datum <- function(exp.control.filenames,
     ))
   }
   ## end dealing with Source Plate Contents
-  names(obj@Source.Plate.ID) <- exp.data$Pos
-  names(obj@Well.ID) <- exp.data$Pos
-  names(obj@Sample.ID) <- exp.data$Pos
-  names(obj@Vial.ID) <- exp.data$Pos
   obj
 }

@@ -566,10 +566,10 @@ create.analysis <- function(export.datum,
   ## which is constructed by default
 
   ## additional fields required for final report
-  obj@Source.Plate.ID <- export.datum@Source.Plate.ID[obj@Rep1.Well]
-  obj@Well.ID <- export.datum@Well.ID[obj@Rep1.Well]
-  obj@Sample.ID <- export.datum@Sample.ID[obj@Rep1.Well]
-  obj@Vial.ID <- export.datum@Vial.ID[obj@Rep1.Well]
+  obj@Source.Plate.ID <- export.datum@Source.Plate.ID
+  obj@Well.ID <- export.datum@Well.ID
+  obj@Sample.ID <- export.datum@Sample.ID
+  obj@Vial.ID <- export.datum@Vial.ID
 
 
   ## load Cp data from export datum at the appropriate wells
