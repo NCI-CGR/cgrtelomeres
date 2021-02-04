@@ -308,10 +308,15 @@ combined.techrep <- data.frame(
   Smaller.Value = first.techrep$y,
   Larger.Value = second.techrep$y
 )
+combined.na <- combined.techrep[is.na(combined.techrep$Smaller.Value) |
+  is.na(combined.techrep$Larger.Value), ]
+combined.techrep <- combined.techrep[!is.na(combined.techrep$Smaller.Value) &
+  !is.na(combined.techrep$Larger.Value), ]
+
 problem.ind <- combined.techrep$Smaller.Value > combined.techrep$Larger.Value
 tmp <- combined.techrep$Smaller.Value[problem.ind]
 combined.techrep$Smaller.Value[problem.ind] <-
   combined.techrep$Larger.Value[problem.ind]
 combined.techrep$Larger.Value[problem.ind] <- tmp
-print(combined.techrep)
+print(rbind(combined.techrep, combined.na))
 ```
