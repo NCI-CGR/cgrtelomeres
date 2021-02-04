@@ -296,15 +296,22 @@ print(techrep.plot)
 # Report technical replicate data for easier lookup
 ---
 
-```{r report.techrep.data, eval=TRUE, echo=TRUE}
+```{r report.techrep.data, eval=TRUE, echo=TRUE, results='hide'}
 first.techrep <- techrep.data[duplicated(techrep.data$x), ]
+first.techrep$x <- as.vector(first.techrep$x, mode = "character")
 first.techrep <- first.techrep[order(first.techrep$x), ]
 second.techrep <- techrep.data[duplicated(techrep.data$x, fromLast = TRUE), ]
+second.techrep$x <- as.vector(second.techrep$x, mode = "character")
 second.techrep <- second.techrep[order(second.techrep$x), ]
 combined.techrep <- data.frame(
   Sample.ID = first.techrep$x,
-  Value = first.techrep$y,
-  Other = second.techrep$y
+  Smaller.Value = first.techrep$y,
+  Larger.Value = second.techrep$y
 )
+problem.ind <- combined.techrep$Smaller.Value > combined.techrep$Larger.Value
+tmp <- combined.techrep$Smaller.Value[problem.ind]
+combined.techrep$Smaller.Value[problem.ind] <-
+  combined.techrep$Larger.Value[problem.ind]
+combined.techrep$Larger.Value[problem.ind] <- tmp
 print(combined.techrep)
 ```
