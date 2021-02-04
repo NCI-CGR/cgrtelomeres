@@ -211,9 +211,11 @@ for (i in 1:length(primary.analysis)) {
     slope = slope.telo,
     intercept = int.telo
   )
-  plot.telo <- plot.telo + xlab(expression("log"[2] * "(standard concentrations)"))
-  plot.telo <- plot.telo + ylab(expression("log"[2] * "(telomere observations)"))
-  plot.telo <- plot.telo + ggtitle(paste(project.id, "_",
+  plot.telo <- plot.telo + ggplot2::xlab(expression("log"[2] *
+    "(standard concentrations)"))
+  plot.telo <- plot.telo + ggplot2::ylab(expression("log"[2] *
+    "(telomere observations)"))
+  plot.telo <- plot.telo + ggplot2::ggtitle(paste(project.id, "_",
     pa@Analysis.Code,
     " Telomere Curve",
     sep = ""
@@ -236,8 +238,10 @@ for (i in 1:length(primary.analysis)) {
     slope = slope.cont,
     intercept = int.cont
   )
-  plot.cont <- plot.cont + xlab(expression("log"[2] * "(standard concentrations)"))
-  plot.cont <- plot.cont + ylab(expression("log"[2] * "(36B4 observations)"))
+  plot.cont <- plot.cont + ggplot2::xlab(expression("log"[2] *
+    "(standard concentrations)"))
+  plot.cont <- plot.cont + ggplot2::ylab(expression("log"[2] *
+    "(36B4 observations)"))
   plot.cont <- plot.cont + ggtitle(paste(project.id, "_",
     pa@Analysis.Code,
     " 36B4 Curve",
