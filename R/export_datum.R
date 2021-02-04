@@ -7,7 +7,10 @@
 #' data
 #' @slot Standard numeric vector of standard concentration, or NA if not a
 #' standard sample
+#' @slot Source.Plate.ID character vector of Intermediate Source Plate ID
 #' @slot Well.ID character vector of well ID codes from Source Plate Contents
+#' @slot Sample.ID character vector of sample ID codes from Source Plate
+#' Contents
 #' @slot Vial.ID character vector of vial ID codes from Source Plate Contents
 #' @keywords telomeres
 #' @seealso [read.export.datum()] for loading data into `ExportDatum`
@@ -24,7 +27,9 @@ setClass("ExportDatum", slots = list(
   Cp.Telo = "vector",
   Cp.Control = "vector",
   Standard = "vector",
+  Source.Plate.ID = "vector",
   Well.ID = "vector",
+  Sample.ID = "vector",
   Vial.ID = "vector"
 ))
 
@@ -132,14 +137,24 @@ read.export.datum <- function(exp.control.filenames,
       sheet = 1, rowNames = FALSE, colNames = TRUE
       )
     stopifnot(length(which(colnames(source.plate.contents) ==
+      "Plate.ID")) == 1)
+    stopifnot(length(which(colnames(source.plate.contents) ==
       "Well.ID")) == 1)
     stopifnot(length(which(colnames(source.plate.contents) ==
+      "Sample.ID")) == 1)
+    stopifnot(length(which(colnames(source.plate.contents) ==
       "Vial.ID")) == 1)
+    source.plate.contents[, "Plate.ID"] <-
+      as.vector(source.plate.contents[, "Plate.ID"], mode = "character")
     source.plate.contents[, "Well.ID"] <-
       as.vector(source.plate.contents[, "Well.ID"], mode = "character")
+    source.plate.contents[, "Sample.ID"] <-
+      as.vector(source.plate.contents[, "Sample.ID"], mode = "character")
     source.plate.contents[, "Vial.ID"] <-
       as.vector(source.plate.contents[, "Vial.ID"], mode = "character")
+    obj@Source.Plate.ID <- source.plate.contents[, "Plate.ID"]
     obj@Well.ID <- source.plate.contents[, "Well.ID"]
+    obj@Sample.ID <- source.plate.contents[, "Sample.ID"]
     obj@Vial.ID <- source.plate.contents[, "Vial.ID"]
   } else if (isTRUE(!is.na(plate.content.report)) &
     isTRUE(!is.na(plate.list))) {
@@ -169,6 +184,7 @@ read.export.datum <- function(exp.control.filenames,
       "Plate.ID")) == 1)
     stopifnot(length(which(colnames(plate.content.data) ==
       "Well.ID")) == 1)
+    stopifnot(length(which(colnames(plate.content.data) == "Sample.ID")) == 1)
     stopifnot(length(which(colnames(plate.content.data) ==
       "Vial.ID")) == 1)
     matched.index <- which(grepl(
@@ -188,7 +204,9 @@ read.export.datum <- function(exp.control.filenames,
     target.contents$Well.ID <- as.vector(target.contents$Well.ID,
       mode = "character"
     )
+    obj@Source.Plate.ID <- target.contents$Plate.ID
     obj@Well.ID <- target.contents$Well.ID
+    obj@Sample.ID <- target.contents$Sample.ID
     obj@Vial.ID <- target.contents$Vial.ID
   } else {
     stop(paste("In read.export.datum(), no valid method for pulling ",
@@ -197,6 +215,9 @@ read.export.datum <- function(exp.control.filenames,
     ))
   }
   ## end dealing with Source Plate Contents
-
+  names(obj@Source.Plate.ID) <- exp.data$Pos
+  names(obj@Well.ID) <- exp.data$Pos
+  names(obj@Sample.ID) <- exp.data$Pos
+  names(obj@Vial.ID) <- exp.data$Pos
   obj
 }

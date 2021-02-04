@@ -7,6 +7,7 @@ params:
   project.id: ""
   plate.content.report: ""
   plate.list: ""
+  final.tsv: ""
   infer.384.locations: FALSE
   subject.list.from.input.path: TRUE
 ---
@@ -15,7 +16,7 @@ params:
 # Make sure required output directory structure exists
 ---
 
-```{r, eval=TRUE, echo=FALSE}
+```{r create.output.directories, eval=TRUE, echo=FALSE}
 ## if output directory path does not exist, create it
 create.output.directories(output.path)
 ```
@@ -25,7 +26,7 @@ create.output.directories(output.path)
 # Detect input files based on fixed input directory structure
 ---
 
-```{r, eval=TRUE, echo=FALSE}
+```{r find.input.files, eval=TRUE, echo=FALSE}
 ## aggregate pairs of filenames from input.path/Data/Exports
 input.files <- find.input.files(paste(input.path, "Data",
   "Exports",
@@ -38,7 +39,7 @@ input.files <- find.input.files(paste(input.path, "Data",
 # Load data from detected input files
 ---
 
-```{r, eval=TRUE, echo=FALSE}
+```{r load.exported.data, eval=TRUE, echo=FALSE}
 ## load data from acquired pairs of files
 input.data <- lapply(input.files, function(i) {
   read.export.datum(i,
@@ -58,7 +59,7 @@ input.data <- lapply(input.files, function(i) {
 # Run primary analysis generation on loaded data
 ---
 
-```{r, eval=TRUE, echo=FALSE}
+```{r run.primary.analysis, eval=TRUE, echo=FALSE}
 ## run primary analysis steps for Data/Analysis
 primary.analysis <- lapply(input.data, function(i) {
   create.analysis(i,
@@ -73,11 +74,35 @@ primary.analysis <- lapply(input.data, function(i) {
 # Report primary analysis results to file
 ---
 
-```{r, eval=TRUE, echo=FALSE}
+```{r report.primary.analysis, eval=TRUE, echo=FALSE}
 ## report the primary analysis results to the output/Data/Analysis
 lapply(primary.analysis, function(i) {
   report.primary.analysis(i, output.path, project.id)
 })
+```
+
+---
+# Report final summary table
+---
+```{r report.final.table, eval=TRUE, echo=FALSE}
+## report the final summary table of combined data across primary analyses
+res <- rbind()
+for (i in 1:length(primary.analysis)) {
+  res <- rbind(
+    res,
+    format.final.analysis(
+      primary.analysis[[i]],
+      project.id
+    )
+  )
+}
+write.table(res,
+  final.tsv,
+  row.names = FALSE,
+  col.names = TRUE,
+  quote = FALSE,
+  sep = "\t"
+)
 ```
 
 ---

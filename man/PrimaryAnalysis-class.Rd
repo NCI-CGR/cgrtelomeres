@@ -18,6 +18,14 @@ analysis code A-H}
 \item{\code{Internal.Control}}{boolean vector of whether a sample is an
 internal control}
 
+\item{\code{Source.Plate.ID}}{character vector of Intermediate Source Plate ID}
+
+\item{\code{Well.ID}}{character vector of source plate well ID}
+
+\item{\code{Sample.ID}}{character vector of sample ID}
+
+\item{\code{Vial.ID}}{character vector of vial ID}
+
 \item{\code{Rep1.Well}}{factor of 384 well plate locations for each first replicate}
 
 \item{\code{Rep2.Well}}{factor of 384 well plate locations for each second replicate}

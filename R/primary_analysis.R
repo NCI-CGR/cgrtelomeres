@@ -5,6 +5,10 @@
 #' @slot Source.Well.ID factor of well IDs from source data
 #' @slot Internal.Control boolean vector of whether a sample is an
 #' internal control
+#' @slot Source.Plate.ID character vector of Intermediate Source Plate ID
+#' @slot Well.ID character vector of source plate well ID
+#' @slot Sample.ID character vector of sample ID
+#' @slot Vial.ID character vector of vial ID
 #' @slot Rep1.Well factor of 384 well plate locations for each first replicate
 #' @slot Rep2.Well factor of 384 well plate locations for each second replicate
 #' @slot Rep3.Well factor of 384 well plate locations for each third replicate
@@ -58,6 +62,10 @@ setClass("PrimaryAnalysis", slots = list(
   Analysis.Code = "vector",
   Source.Well.ID = "factor",
   Internal.Control = "vector",
+  Source.Plate.ID = "vector",
+  Well.ID = "vector",
+  Sample.ID = "vector",
+  Vial.ID = "vector",
   Rep1.Well = "factor",
   Rep2.Well = "factor",
   Rep3.Well = "factor",
@@ -514,6 +522,8 @@ create.analysis <- function(export.datum,
   obj@Analysis.Code <- export.datum@Analysis.Code
   rem.ind <- seq(-1, -7, -1)
   obj@Internal.Control[rem.ind][export.datum@Vial.ID %in% control.vials] <- 1
+
+
   ## if infer.384.locations, map 96->384 well plates from plate content
   ## report and list in order to recompute names(obj@Rep[1-3].Well)
   if (infer.384.locations & isTRUE(!is.na(plate.list)) &
@@ -554,6 +564,13 @@ create.analysis <- function(export.datum,
   }
   ## implied remaining condition is use predicted well assignments,
   ## which is constructed by default
+
+  ## additional fields required for final report
+  obj@Source.Plate.ID <- export.datum@Source.Plate.ID[obj@Rep1.Well]
+  obj@Well.ID <- export.datum@Well.ID[obj@Rep1.Well]
+  obj@Sample.ID <- export.datum@Sample.ID[obj@Rep1.Well]
+  obj@Vial.ID <- export.datum@Vial.ID[obj@Rep1.Well]
+
 
   ## load Cp data from export datum at the appropriate wells
   obj@Rep1.ExperimentalCt.prefilter <- export.datum@Cp.Telo[obj@Rep1.Well]

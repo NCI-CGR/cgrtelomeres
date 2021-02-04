@@ -28,6 +28,58 @@ create.output.directories <- function(top.path) {
   )
 }
 
+#' Make final report spreadsheet
+#'
+#' @description
+#' `format.final.analysis` compels the contents of a PrimaryAnalysis
+#' object into the appropriate data.frame format and returns it, expecting
+#' it to be combined with the results from other PrimaryAnalysis objects
+#' with `rbind`.
+#'
+#' @details
+#' Exact format details are TBD.
+#'
+#' @param primary.analysis PrimaryAnalysis object to be manipulated
+#' @param project.id Character vector of project ID (e.g. "GP0317-TL7")
+#' @keywords telomeres
+#' @seealso [create.analysis()] for generating compatible
+#' PrimaryAnalysis objects.
+format.final.analysis <- function(primary.analysis,
+                                  project.id) {
+  res <- data.frame(
+    project.id,
+    primary.analysis@Source.Plate.ID,
+    primary.analysis@Analysis.Code,
+    primary.analysis@Well.ID,
+    primary.analysis@Sample.ID,
+    primary.analysis@Vial.ID,
+    primary.analysis@PerCV.ExperimentalCt,
+    primary.analysis@PerCV.ControlCt,
+    primary.analysis@Fit.ExperimentalConc,
+    primary.analysis@Fit.ControlConc,
+    primary.analysis@TS.Ratio,
+    primary.analysis@Normalized.TS
+  )
+  remove.index <- seq(-1, -7, -1)
+  res <- res[remove.index, ]
+  colnames(res) <- c(
+    "Project ID",
+    "Intermediate Source Plate ID",
+    "Plate Instance",
+    "Well ID",
+    "Sample ID",
+    "Vial ID",
+    "Telo %CV",
+    "36B4 %CV",
+    "[Telo]",
+    "[36B4]",
+    "Raw T/S Ratio",
+    "Standardized T/S Ratio"
+  )
+  res
+}
+
+
 #' Write PrimaryAnalysis object to file in simplified format
 #'
 #' @description
