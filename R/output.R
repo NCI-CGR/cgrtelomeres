@@ -47,18 +47,18 @@ create.output.directories <- function(top.path) {
 format.final.analysis <- function(primary.analysis,
                                   project.id) {
   res <- data.frame(
-    project.id,
-    primary.analysis@Source.Plate.ID,
-    primary.analysis@Analysis.Code,
-    primary.analysis@Well.ID,
-    primary.analysis@Sample.ID,
-    primary.analysis@Vial.ID,
-    primary.analysis@PerCV.ExperimentalCt,
-    primary.analysis@PerCV.ControlCt,
-    primary.analysis@Fit.ExperimentalConc,
-    primary.analysis@Fit.ControlConc,
-    primary.analysis@TS.Ratio,
-    primary.analysis@Normalized.TS
+    rep(project.id, 96),
+    tail(primary.analysis@Source.Plate.ID, n = 96),
+    tail(primary.analysis@Analysis.Code, n = 96),
+    tail(primary.analysis@Well.ID, n = 96),
+    tail(primary.analysis@Sample.ID, n = 96),
+    tail(primary.analysis@Vial.ID, n = 96),
+    tail(primary.analysis@PerCV.ExperimentalCt, n = 96),
+    tail(primary.analysis@PerCV.ControlCt, n = 96),
+    tail(primary.analysis@Fit.ExperimentalConc, n = 96),
+    tail(primary.analysis@Fit.ControlConc, n = 96),
+    tail(primary.analysis@TS.Ratio, n = 96),
+    tail(primary.analysis@Normalized.TS, n = 96)
   )
   remove.index <- seq(-1, -7, -1)
   res <- res[remove.index, ]
