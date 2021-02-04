@@ -173,7 +173,7 @@ sets of plates.
 ---
 
 ```{r internal.controls, eval=TRUE, echo=FALSE}
-res.int <- res[res[, "Sample ID"] == "NA07057"]
+res.int <- res[res[, "Sample ID"] == "NA07057", ]
 mean.cv <- mean(res.int[, "Telo %CV"], na.rm = TRUE)
 box.data <- data.frame(
   x = rep(res.int[, "Sample ID"], 2),
