@@ -7,9 +7,11 @@ cre
 Cts
 Dagnall
 ExportDatum
+ggplot
 gitlab
 GitLab
 gpl
+intraclass
 LazyData
 lexicographically
 linter
@@ -18,6 +20,7 @@ lm
 mit
 NCI
 nih
+NTC
 openxlsx
 palmer
 PlateContentReport

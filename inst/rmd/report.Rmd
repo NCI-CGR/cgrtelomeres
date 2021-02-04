@@ -13,6 +13,23 @@ params:
 ---
 
 ---
+# Set global ggplot2 theme
+---
+
+```{r ggplottheme, eval=TRUE, echo=FALSE}
+my.theme <- ggplot2::theme_light() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 18, hjust = 0.5),
+    axis.title = ggplot2::element_text(size = 16),
+    axis.text = ggplot2::element_text(size = 14),
+    legend.title = ggplot2::element_text(size = 16),
+    legend.text = ggplot2::element_text(size = 14),
+    strip.background = ggplot2::element_blank(),
+    strip.text = ggplot2::element_text(size = 16, colour = "black")
+  )
+```
+
+---
 # Make sure required output directory structure exists
 ---
 
@@ -96,6 +113,8 @@ for (i in 1:length(primary.analysis)) {
     )
   )
 }
+res <- res[!is.na(res[, "Vial ID"]) &
+  !is.na(res[, "Sample ID"]), ]
 write.table(res,
   final.tsv,
   row.names = FALSE,
@@ -104,6 +123,157 @@ write.table(res,
   sep = "\t"
 )
 ```
+
+---
+# Compute ICC
+---
+```{r icc, eval=TRUE, echo=FALSE}
+## extract subject dups only
+res.dups <- res[res[, "Vial ID"] != "NA07057" &
+  res[, "Sample ID"] != "NTC", ]
+completion.rate <- length(which(!is.na(res.dups[, "Standardized.T/S.Ratio"])))
+completion.rate <- completion.rate / nrow(res.dups) * 100
+telo.cv <- mean(res.dups[, "Telo %CV"], na.rm = TRUE)
+control.cv <- mean(res.dups[, "36B4 %CV"], na.rm = TRUE)
+unique.study.samples <- length(which(unique(res.dups[, "Sample.ID"])))
+res.dups <- res.dups[duplicated(res.dups[, "Sample ID"]) |
+  duplicated(res.dups[, "Sample ID"], fromLast = TRUE), ]
+n.tech.reps <- length(which(unique(res.dups[, "Sample ID"])))
+## compute ICC to match existing method
+ICC.est <- ICC::ICCest(
+  factor(tech.reps[, "Sample ID"]),
+  tech.reps[, "Standardized T/S Ratio"]
+)
+```
+
+---
+# Report first summary blob
+---
+
+## Samples
+
+A total of `r unique.study.samples` unique study samples were run 
+in this project. CGR Internal Controls (NA07057) were added to five
+of those wells and water (NTC) was added to one of those wells.
+A total of `r nrow(res)` sample instances in the project were tested
+across `r length(unique(res[, "Intermediate Source Plate ID"]))`
+sets of plates.
+
+ - Overall completion rate of study samples: 
+   `r round(completion.rate, 2)`%
+ - Average %CV for Telo assay triplicates:
+   `r round(telo.cv, 3)`%
+ - Average %CV for 36B4 assay triplicates:
+   `r round(control.cv, 3)`%
+ - Technical replicates in project (n=`r n.tech.reps`), 
+   `r round(n.tech.reps/unique.study.samples*100,1)`%
+
+---
+# Compute information about internal controls
+---
+
+```{r internal.controls, eval=TRUE, echo=FALSE}
+res.int <- res[res[, "Sample ID"] == "NA07057"]
+mean.cv <- mean(res.int[, "Telo %CV"], na.rm = TRUE)
+box.data <- data.frame(
+  x = rep(res.int[, "Sample ID"], 2),
+  y = c(
+    res.int[, "Raw T/S Ratio"],
+    res.int[, "Standardized T/S Ratio"]
+  ),
+  group = rep(c(
+    "Raw T/S Ratio",
+    "Standardized T/S Ratio"
+  ),
+  each = nrow(res.int)
+  )
+)
+cv.box <- ggplot2::ggplot(ggplot2::aes(
+  x = .data$x,
+  y = .data$y,
+  group = .data$group
+),
+data = box.data
+)
+cv.box <- cv.box + my.theme
+cv.box <- cv.box + ggplot2::geom_boxplot()
+cv.box <- cv.box + ggplot2::geom_jitter(
+  shape = 16,
+  position = ggplot2::position_jitter(0.2)
+)
+cv.box <- cv.box + ggplot2::xlab("Intermediate Source Plate ID")
+cv.box <- cv.box + ggplot2::ylab("")
+```
+
+---
+# Report on internal controls
+---
+
+## Internal Controls
+
+The CGR Internal Control, which is used to standardize the raw T/S ratios for all samples
+within each plate of the project, had an overall CV of `r round(mean.cv, 3)`%.
+
+---
+# Render the CV boxplot
+---
+
+```{r render.cv.boxplot, eval=TRUE, echo=FALSE}
+print(cv.box)
+```
+
+---
+# Compute information on technical replicates
+---
+
+```{r compute.techrep, eval=TRUE, echo=FALSE}
+techrep.data <- data.frame(
+  y = res.dups[, "Standardized T/S Ratio"],
+  x = res.dups[, "Sample ID"]
+)
+## assign each sample its average value for plotting
+tech.samples <- unique(techrep.data$x)
+tech.values <- c()
+for (id in tech.samples) {
+  tech.values <- c(
+    tech.values,
+    mean(techrep.data[techrep.data$x == id, y],
+      na.rm = TRUE
+    )
+  )
+}
+tech.samples <- tech.samples[order(tech.values)]
+techrep.data$x <- factor(techrep.data$x, levels = tech.samples)
+techrep.plot <- ggplot2::ggplot(ggplot2::aes(
+  x = .data$x,
+  y = .data$y
+),
+data = techrep.data
+)
+techrep.plot <- techrep.plot + my.theme
+techrep.plot <- techrep.plot + ggplot2::xlab("")
+techrep.plot <- techrep.plot + ggplot2::ylab("Standardized T/S Ratio")
+```
+
+---
+# Report on Technical Replicates
+---
+
+The distribution of standardized T/S ratios from the technical replicates
+between plates can be seen below. The intraclass correlation coefficient (ICC)
+and its 95% confidence interval were `r ICC.est$ICC` 
+(`r ICC.est$LowerCI`,`r ICC.est$UpperCI`).
+
+
+---
+# Render the technical replicate scatterplot
+---
+
+```{r render.techrep.scatterplot, eval=TRUE, echo=FALSE}
+print(techrep.plot)
+```
+
+
 
 ---
 # Placeholder final block, to report run success
