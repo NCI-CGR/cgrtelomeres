@@ -618,6 +618,13 @@ create.analysis <- function(export.datum,
     FALSE
   )
   obj@PerCV.ControlCt <- 100 * obj@SD.ControlCt / obj@Avg.ControlCt
+  ## apply coefficient of variation filtering
+  ## evidently they use a cutoff of >2 to remove bad replicates
+  CV.threshold <- 2
+  CV.exclude <- obj@PerCV.ControlCt > CV.threshold |
+    obj@PerCV.ExperimentalCt > CV.threshold
+  obj@Avg.ExperimentalCt[CV.exclude] <- NA
+  obj@Avg.ControlCt[CV.exclude] <- NA
   ## must run exponential regressions against the standard lanes.
   ## now, it *appears* that the standard concentrations are predefined
   ## in the excel template, and are likely fixed across experiments.
